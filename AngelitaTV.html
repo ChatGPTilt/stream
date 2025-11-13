@@ -73,12 +73,9 @@
     
     h1 {
       font-size: 3em;
-      background: linear-gradient(45deg, var(--accent), #fda4af, #fecdd3);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #ffffff;
       margin-bottom: 5px;
-      text-shadow: 0 0 30px rgba(255, 102, 204, 0.5);
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     }
     
     .subtitle {
@@ -846,8 +843,11 @@
         videoEl.srcObject = event.streams[0];
         videoContainer.classList.add("active");
         connectionStatus.classList.add("active");
-        statusEl.textContent = "✅ Transmisión en vivo";
-        qualityEl.textContent = "En vivo";
+        
+        // Actualizar estado inmediatamente
+        statusEl.textContent = "✅ Transmisión recibida";
+        qualityEl.textContent = "Cargando...";
+        updateConnectionStatus('connected', '✅ Recibiendo');
         
         // Verificar si hay audio
         const audioTracks = event.streams[0].getAudioTracks();

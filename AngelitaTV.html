@@ -11,15 +11,58 @@
       box-sizing: border-box;
     }
     
+    :root {
+      --primary: #667eea;
+      --secondary: #764ba2;
+      --accent: #ff66cc;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
       color: #fff;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 20px;
+      transition: background 0.5s ease;
+    }
+
+    body.purple {
+      --primary: #667eea;
+      --secondary: #764ba2;
+      --accent: #ff66cc;
+    }
+
+    body.pink {
+      --primary: #ec4899;
+      --secondary: #be185d;
+      --accent: #fda4af;
+    }
+
+    body.blue {
+      --primary: #3b82f6;
+      --secondary: #1e40af;
+      --accent: #93c5fd;
+    }
+
+    body.green {
+      --primary: #10b981;
+      --secondary: #047857;
+      --accent: #6ee7b7;
+    }
+
+    body.orange {
+      --primary: #f97316;
+      --secondary: #c2410c;
+      --accent: #fdba74;
+    }
+
+    body.cyan {
+      --primary: #06b6d4;
+      --secondary: #0e7490;
+      --accent: #67e8f9;
     }
     
     header {
@@ -30,7 +73,7 @@
     
     h1 {
       font-size: 3em;
-      background: linear-gradient(45deg, #ff66cc, #ff99dd, #ffccee);
+      background: linear-gradient(45deg, var(--accent), #fda4af, #fecdd3);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -40,8 +83,134 @@
     
     .subtitle {
       font-size: 1.1em;
-      color: #ffccee;
+      color: #ffe4f1;
       opacity: 0.9;
+    }
+
+    .settings-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      font-size: 1.5em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .settings-btn:hover {
+      transform: rotate(90deg) scale(1.1);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+    }
+
+    .settings-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      z-index: 998;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .settings-overlay.active {
+      display: block;
+      opacity: 1;
+    }
+
+    .settings-panel {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 350px;
+      height: 100vh;
+      background: rgba(26, 26, 26, 0.98);
+      backdrop-filter: blur(20px);
+      padding: 30px;
+      box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+      transition: right 0.4s ease;
+      z-index: 999;
+      overflow-y: auto;
+    }
+
+    .settings-panel.active {
+      right: 0;
+    }
+
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .settings-title {
+      font-size: 1.5em;
+      color: var(--accent);
+    }
+
+    .close-settings {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.8em;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      transition: transform 0.2s ease;
+    }
+
+    .close-settings:hover {
+      transform: scale(1.2);
+    }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .theme-option {
+      padding: 15px;
+      border-radius: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .theme-option:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+    }
+
+    .theme-option.active {
+      border-color: var(--accent);
+      background: rgba(255, 102, 204, 0.2);
+    }
+
+    .theme-preview {
+      width: 100%;
+      height: 40px;
+      border-radius: 8px;
+      margin-bottom: 8px;
     }
     
     #controls {
@@ -85,7 +254,7 @@
     
     input:focus {
       outline: none;
-      border-color: #ff66cc;
+      border-color: var(--accent);
       background: rgba(255, 255, 255, 0.2);
       box-shadow: 0 0 20px rgba(255, 102, 204, 0.4);
     }
@@ -95,7 +264,7 @@
       padding: 14px;
       border-radius: 12px;
       border: none;
-      background: linear-gradient(135deg, #ff66cc, #ff99dd);
+      background: linear-gradient(135deg, var(--accent), var(--primary));
       color: #fff;
       font-size: 1.1em;
       font-weight: bold;
@@ -126,7 +295,7 @@
       border-radius: 10px;
       text-align: center;
       font-size: 0.95em;
-      border-left: 4px solid #ff66cc;
+      border-left: 4px solid var(--accent);
     }
     
     .video-container {
@@ -200,7 +369,7 @@
       width: 16px;
       height: 16px;
       border-radius: 50%;
-      background: #ff66cc;
+      background: var(--accent);
       cursor: pointer;
       box-shadow: 0 0 10px rgba(255, 102, 204, 0.6);
     }
@@ -209,7 +378,7 @@
       width: 16px;
       height: 16px;
       border-radius: 50%;
-      background: #ff66cc;
+      background: var(--accent);
       cursor: pointer;
       border: none;
     }
@@ -219,7 +388,7 @@
       padding: 8px 15px;
       border-radius: 20px;
       font-size: 0.85em;
-      border: 1px solid rgba(255, 102, 204, 0.4);
+      border: 1px solid var(--accent);
       white-space: nowrap;
     }
     
@@ -258,9 +427,40 @@
     }
     
     .stats-title {
-      color: #ff66cc;
+      color: var(--accent);
       font-weight: bold;
       margin-bottom: 8px;
+    }
+
+    .connection-status {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 10px 15px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      display: none;
+      z-index: 10;
+    }
+
+    .connection-status.active {
+      display: block;
+    }
+
+    .connection-status.checking {
+      border: 2px solid #fbbf24;
+      color: #fbbf24;
+    }
+
+    .connection-status.connected {
+      border: 2px solid #10b981;
+      color: #10b981;
+    }
+
+    .connection-status.failed {
+      border: 2px solid #ef4444;
+      color: #ef4444;
     }
 
     /* Estilos para pantalla completa */
@@ -345,7 +545,46 @@
     }
   </style>
 </head>
-<body>
+<body class="purple">
+  <button class="settings-btn" id="settingsBtn">⚙️</button>
+
+  <div class="settings-overlay" id="settingsOverlay"></div>
+
+  <div class="settings-panel" id="settingsPanel">
+    <div class="settings-header">
+      <span class="settings-title">⚙️ Personalización</span>
+      <button class="close-settings" id="closeSettings">×</button>
+    </div>
+
+    <h3 style="margin-bottom: 15px; color: var(--accent);">🎨 Temas de color</h3>
+    <div class="theme-grid">
+      <div class="theme-option active" data-theme="purple">
+        <div class="theme-preview" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div>
+        <div>Púrpura Rosa</div>
+      </div>
+      <div class="theme-option" data-theme="pink">
+        <div class="theme-preview" style="background: linear-gradient(135deg, #ec4899, #be185d);"></div>
+        <div>Rosa Intenso</div>
+      </div>
+      <div class="theme-option" data-theme="blue">
+        <div class="theme-preview" style="background: linear-gradient(135deg, #3b82f6, #1e40af);"></div>
+        <div>Azul</div>
+      </div>
+      <div class="theme-option" data-theme="green">
+        <div class="theme-preview" style="background: linear-gradient(135deg, #10b981, #047857);"></div>
+        <div>Verde Esmeralda</div>
+      </div>
+      <div class="theme-option" data-theme="orange">
+        <div class="theme-preview" style="background: linear-gradient(135deg, #f97316, #c2410c);"></div>
+        <div>Naranja</div>
+      </div>
+      <div class="theme-option" data-theme="cyan">
+        <div class="theme-preview" style="background: linear-gradient(135deg, #06b6d4, #0e7490);"></div>
+        <div>Cian</div>
+      </div>
+    </div>
+  </div>
+
   <header>
     <h1>📺 AngelitaTV</h1>
     <p class="subtitle">Transmisión en vivo privada</p>
@@ -372,12 +611,18 @@
   <div class="video-container" id="videoContainer">
     <video id="remoteVideo" autoplay playsinline></video>
     
+    <div class="connection-status" id="connectionStatus">
+      <span id="connectionText">Conectando...</span>
+    </div>
+    
     <div class="stats" id="stats">
       <div class="stats-title">📊 Estadísticas</div>
       <div>Estado: <span id="connState">Conectando...</span></div>
+      <div>ICE: <span id="iceState">Nuevo</span></div>
       <div>Bitrate: <span id="bitrate">-- kbps</span></div>
       <div>FPS: <span id="fpsDisplay">--</span></div>
       <div>Resolución: <span id="resolution">--</span></div>
+      <div>Paquetes perdidos: <span id="packetsLost">0</span></div>
     </div>
     
     <div class="video-controls">
@@ -399,6 +644,8 @@
     const signalingUrl = "wss://cucaracha-server.onrender.com";
     let ws, pc, currentRoom;
     let statsInterval;
+    let reconnectAttempts = 0;
+    const MAX_RECONNECT_ATTEMPTS = 3;
     
     const videoEl = document.getElementById("remoteVideo");
     const videoContainer = document.getElementById("videoContainer");
@@ -410,6 +657,45 @@
     const statsBtn = document.getElementById("statsBtn");
     const statsPanel = document.getElementById("stats");
     const qualityEl = document.getElementById("quality");
+    const connectionStatus = document.getElementById("connectionStatus");
+    const connectionText = document.getElementById("connectionText");
+    const settingsBtn = document.getElementById("settingsBtn");
+    const settingsPanel = document.getElementById("settingsPanel");
+    const settingsOverlay = document.getElementById("settingsOverlay");
+    const closeSettings = document.getElementById("closeSettings");
+
+    // Sistema de temas
+    const themeOptions = document.querySelectorAll('.theme-option');
+    const savedTheme = localStorage.getItem('angelitatv-theme') || 'purple';
+    
+    document.body.className = savedTheme;
+    themeOptions.forEach(opt => {
+      if (opt.dataset.theme === savedTheme) {
+        opt.classList.add('active');
+      }
+      
+      opt.addEventListener('click', () => {
+        themeOptions.forEach(o => o.classList.remove('active'));
+        opt.classList.add('active');
+        document.body.className = opt.dataset.theme;
+        localStorage.setItem('angelitatv-theme', opt.dataset.theme);
+      });
+    });
+
+    // Abrir/cerrar panel de configuración
+    function openSettings() {
+      settingsPanel.classList.add('active');
+      settingsOverlay.classList.add('active');
+    }
+
+    function closeSettingsPanel() {
+      settingsPanel.classList.remove('active');
+      settingsOverlay.classList.remove('active');
+    }
+
+    settingsBtn.onclick = openSettings;
+    closeSettings.onclick = closeSettingsPanel;
+    settingsOverlay.onclick = closeSettingsPanel;
 
     joinBtn.onclick = async () => {
       const roomId = document.getElementById("roomId").value.trim();
@@ -422,8 +708,14 @@
 
       joinBtn.disabled = true;
       document.getElementById("btnText").textContent = "⏳ Conectando...";
+      reconnectAttempts = 0;
       connectToRoom(roomId, password);
     };
+
+    function updateConnectionStatus(state, text) {
+      connectionStatus.className = 'connection-status active ' + state;
+      connectionText.textContent = text;
+    }
 
     function connectToRoom(roomId, password) {
       currentRoom = roomId;
@@ -446,21 +738,29 @@
           console.log("📥 Recibiendo transmisión...");
           statusEl.textContent = "🔗 Estableciendo conexión...";
           qualityEl.textContent = "Conectando...";
+          updateConnectionStatus('checking', '🔄 Conectando...');
           
-          await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
-          const answer = await pc.createAnswer();
-          await pc.setLocalDescription(answer);
-          
-          ws.send(JSON.stringify({ 
-            type: "answer", 
-            answer, 
-            room: currentRoom 
-          }));
+          try {
+            await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+            
+            ws.send(JSON.stringify({ 
+              type: "answer", 
+              answer, 
+              room: currentRoom 
+            }));
+          } catch (err) {
+            console.error("❌ Error al procesar oferta:", err);
+            statusEl.textContent = "❌ Error al establecer conexión";
+            updateConnectionStatus('failed', '❌ Error');
+          }
           
         } else if (data.type === "ice-candidate") {
           try {
-            if (pc.remoteDescription) {
-              await pc.addIceCandidate(data.candidate);
+            if (pc && pc.remoteDescription) {
+              await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+              console.log("✅ Candidato ICE agregado:", data.candidate.type);
             }
           } catch (err) {
             console.error("❌ Error ICE:", err);
@@ -468,38 +768,76 @@
         } else if (data.type === "error") {
           statusEl.textContent = "❌ " + data.message;
           qualityEl.textContent = "Error";
+          updateConnectionStatus('failed', '❌ ' + data.message);
           joinBtn.disabled = false;
           document.getElementById("btnText").textContent = "🎬 Reintentar";
         }
       };
 
-      ws.onerror = () => {
+      ws.onerror = (error) => {
+        console.error("❌ Error WebSocket:", error);
         statusEl.textContent = "❌ Error de conexión al servidor";
         joinBtn.disabled = false;
       };
 
       ws.onclose = () => {
+        console.log("🔌 WebSocket cerrado");
         statusEl.textContent = "❌ Desconectado del servidor";
         qualityEl.textContent = "Desconectado";
+        updateConnectionStatus('failed', '❌ Desconectado');
         if (statsInterval) clearInterval(statsInterval);
+        
+        // Intentar reconectar si fue inesperado
+        if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS && videoContainer.classList.contains('active')) {
+          reconnectAttempts++;
+          console.log(`🔄 Intento de reconexión ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS}`);
+          statusEl.textContent = `🔄 Reconectando... (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`;
+          setTimeout(() => connectToRoom(roomId, password), 2000);
+        }
       };
     }
 
     function initializePeerConnection() {
+      // Configuración mejorada con servidores TURN
       pc = new RTCPeerConnection({
         iceServers: [
           { urls: "stun:stun.l.google.com:19302" },
-          { urls: "stun:stun1.l.google.com:19302" }
-        ]
+          { urls: "stun:stun1.l.google.com:19302" },
+          { urls: "stun:stun2.l.google.com:19302" },
+          { urls: "stun:stun3.l.google.com:19302" },
+          { urls: "stun:stun4.l.google.com:19302" },
+          // Servidores TURN públicos gratuitos
+          {
+            urls: "turn:openrelay.metered.ca:80",
+            username: "openrelayproject",
+            credential: "openrelayproject"
+          },
+          {
+            urls: "turn:openrelay.metered.ca:443",
+            username: "openrelayproject",
+            credential: "openrelayproject"
+          },
+          {
+            urls: "turn:openrelay.metered.ca:443?transport=tcp",
+            username: "openrelayproject",
+            credential: "openrelayproject"
+          }
+        ],
+        iceCandidatePoolSize: 10,
+        bundlePolicy: 'max-bundle',
+        rtcpMuxPolicy: 'require'
       });
 
       pc.onicecandidate = (event) => {
         if (event.candidate) {
+          console.log("📤 Enviando candidato ICE:", event.candidate.type);
           ws.send(JSON.stringify({
             type: "ice-candidate",
             candidate: event.candidate,
             room: currentRoom
           }));
+        } else {
+          console.log("✅ Todos los candidatos ICE enviados");
         }
       };
 
@@ -507,54 +845,114 @@
         console.log("🎥 Stream recibido!");
         videoEl.srcObject = event.streams[0];
         videoContainer.classList.add("active");
+        connectionStatus.classList.add("active");
         statusEl.textContent = "✅ Transmisión en vivo";
         qualityEl.textContent = "En vivo";
         
-        // Iniciar monitoreo de estadísticas
+        // Verificar si hay audio
+        const audioTracks = event.streams[0].getAudioTracks();
+        if (audioTracks.length === 0) {
+          console.warn("⚠️ No se detectó pista de audio");
+        } else {
+          console.log("✅ Pista de audio detectada");
+        }
+        
         startStatsMonitoring();
       };
 
       pc.onconnectionstatechange = () => {
         const state = pc.connectionState;
-        console.log("🔄 Estado:", state);
+        console.log("🔄 Estado de conexión:", state);
         document.getElementById("connState").textContent = state;
         
         if (state === "connected") {
           statusEl.textContent = "✅ Conectado - Disfrutando la transmisión";
           qualityEl.textContent = "Excelente";
-        } else if (state === "failed" || state === "disconnected") {
-          statusEl.textContent = "❌ Conexión perdida";
+          updateConnectionStatus('connected', '✅ Conectado');
+          reconnectAttempts = 0;
+        } else if (state === "connecting") {
+          statusEl.textContent = "🔗 Estableciendo conexión...";
+          updateConnectionStatus('checking', '🔄 Conectando...');
+        } else if (state === "failed") {
+          statusEl.textContent = "❌ Conexión fallida";
+          qualityEl.textContent = "Error";
+          updateConnectionStatus('failed', '❌ Falló');
+          console.error("❌ La conexión peer falló");
+        } else if (state === "disconnected") {
+          statusEl.textContent = "⚠️ Conexión interrumpida";
           qualityEl.textContent = "Desconectado";
+          updateConnectionStatus('failed', '⚠️ Desconectado');
           videoContainer.classList.remove("active");
         }
+      };
+
+      pc.oniceconnectionstatechange = () => {
+        const iceState = pc.iceConnectionState;
+        console.log("🧊 Estado ICE:", iceState);
+        document.getElementById("iceState").textContent = iceState;
+        
+        if (iceState === 'failed') {
+          console.error("❌ ICE falló - posible problema de firewall/NAT");
+          statusEl.textContent = "❌ No se pudo conectar (firewall/NAT)";
+          updateConnectionStatus('failed', '❌ Firewall/NAT');
+        } else if (iceState === 'checking') {
+          updateConnectionStatus('checking', '🔄 Verificando ruta...');
+        } else if (iceState === 'connected' || iceState === 'completed') {
+          updateConnectionStatus('connected', '✅ Conectado');
+        }
+      };
+
+      pc.onicegatheringstatechange = () => {
+        console.log("🔍 Estado de recolección ICE:", pc.iceGatheringState);
       };
     }
 
     async function startStatsMonitoring() {
+      let lastBytesReceived = 0;
+      let lastTimestamp = Date.now();
+      
       statsInterval = setInterval(async () => {
         if (!pc) return;
         
-        const stats = await pc.getStats();
-        stats.forEach(report => {
-          if (report.type === 'inbound-rtp' && report.kind === 'video') {
-            // Bitrate
-            if (report.bytesReceived) {
-              const bitrate = Math.round(report.bytesReceived * 8 / 1000);
-              document.getElementById("bitrate").textContent = bitrate + " kbps";
+        try {
+          const stats = await pc.getStats();
+          stats.forEach(report => {
+            if (report.type === 'inbound-rtp' && report.kind === 'video') {
+              // Bitrate
+              if (report.bytesReceived && lastBytesReceived > 0) {
+                const now = Date.now();
+                const bitrate = Math.round(
+                  ((report.bytesReceived - lastBytesReceived) * 8) / 
+                  ((now - lastTimestamp) / 1000) / 1000
+                );
+                document.getElementById("bitrate").textContent = bitrate + " kbps";
+                lastBytesReceived = report.bytesReceived;
+                lastTimestamp = now;
+              } else {
+                lastBytesReceived = report.bytesReceived;
+                lastTimestamp = Date.now();
+              }
+              
+              // FPS
+              if (report.framesPerSecond) {
+                document.getElementById("fpsDisplay").textContent = Math.round(report.framesPerSecond);
+              }
+              
+              // Resolución
+              if (report.frameWidth && report.frameHeight) {
+                document.getElementById("resolution").textContent = 
+                  report.frameWidth + "x" + report.frameHeight;
+              }
+
+              // Paquetes perdidos
+              if (report.packetsLost !== undefined) {
+                document.getElementById("packetsLost").textContent = report.packetsLost;
+              }
             }
-            
-            // FPS
-            if (report.framesPerSecond) {
-              document.getElementById("fpsDisplay").textContent = Math.round(report.framesPerSecond);
-            }
-            
-            // Resolución
-            if (report.frameWidth && report.frameHeight) {
-              document.getElementById("resolution").textContent = 
-                report.frameWidth + "x" + report.frameHeight;
-            }
-          }
-        });
+          });
+        } catch (err) {
+          console.error("Error obteniendo stats:", err);
+        }
       }, 1000);
     }
 
@@ -622,6 +1020,15 @@
       } else if (e.key === "m" || e.key === "M") {
         volumeIcon.click();
       }
+    });
+
+    // Manejar eventos de audio
+    videoEl.addEventListener('loadedmetadata', () => {
+      const audioTracks = videoEl.srcObject?.getAudioTracks() || [];
+      console.log(`🔊 Pistas de audio disponibles: ${audioTracks.length}`);
+      audioTracks.forEach((track, index) => {
+        console.log(`  Pista ${index}: ${track.label}, enabled: ${track.enabled}`);
+      });
     });
   </script>
 </body>

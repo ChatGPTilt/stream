@@ -3,94 +3,543 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Transmisión en vivo</title>
+  <title>StreamPro - Emisor</title>
   <style>
+    :root {
+      --primary: #667eea;
+      --secondary: #764ba2;
+      --accent: #66ccff;
+      --bg-dark: #0f0f0f;
+      --bg-card: #1a1a1a;
+      --text: #ffffff;
+      --text-muted: #aaaaaa;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
-      font-family: Arial, sans-serif;
-      background-color: #0f0f0f;
-      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: var(--text);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
+      padding: 20px;
+      transition: background 0.5s ease;
+    }
+
+    body.dark-blue {
+      --primary: #1e3a8a;
+      --secondary: #1e40af;
+      --accent: #3b82f6;
+    }
+
+    body.sunset {
+      --primary: #f97316;
+      --secondary: #dc2626;
+      --accent: #fb923c;
+    }
+
+    body.forest {
+      --primary: #059669;
+      --secondary: #047857;
+      --accent: #10b981;
+    }
+
+    body.ocean {
+      --primary: #0891b2;
+      --secondary: #0e7490;
+      --accent: #06b6d4;
+    }
+
+    body.midnight {
+      --primary: #1f2937;
+      --secondary: #111827;
+      --accent: #6366f1;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      animation: fadeIn 0.8s ease-in;
+    }
+    
+    h1 {
+      font-size: 3em;
+      background: linear-gradient(45deg, var(--accent), #99ddff, #ccf0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 5px;
+      text-shadow: 0 0 30px rgba(102, 204, 255, 0.5);
+    }
+    
+    .subtitle {
+      font-size: 1.1em;
+      color: #e0f2ff;
+      opacity: 0.9;
+    }
+
+    .settings-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      font-size: 1.5em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      margin: 0;
     }
-    h1 {
-      color: #66ccff;
+
+    .settings-btn:hover {
+      transform: rotate(90deg) scale(1.1);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
     }
-    #controls {
+
+    .settings-panel {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 350px;
+      height: 100vh;
+      background: rgba(26, 26, 26, 0.98);
+      backdrop-filter: blur(20px);
+      padding: 30px;
+      box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+      transition: right 0.4s ease;
+      z-index: 999;
+      overflow-y: auto;
+    }
+
+    .settings-panel.active {
+      right: 0;
+    }
+
+    .settings-header {
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      gap: 10px;
-      background: #1a1a1a;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(102, 204, 255, 0.3);
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
     }
-    input, button, select {
-      padding: 8px 10px;
-      border-radius: 6px;
+
+    .settings-title {
+      font-size: 1.5em;
+      color: var(--accent);
+    }
+
+    .close-settings {
+      background: none;
       border: none;
-      font-size: 14px;
+      color: white;
+      font-size: 1.8em;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
     }
-    input, select {
-      width: 220px;
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .theme-option {
+      padding: 15px;
+      border-radius: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
       text-align: center;
     }
-    button {
-      background-color: #66ccff;
-      color: #fff;
-      cursor: pointer;
-      transition: 0.2s;
+
+    .theme-option:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
     }
-    button:hover {
-      background-color: #99ddff;
+
+    .theme-option.active {
+      border-color: var(--accent);
+      background: rgba(102, 204, 255, 0.2);
     }
-    #status {
-      margin-top: 15px;
-      font-size: 14px;
-      color: #ccc;
+
+    .theme-preview {
+      width: 100%;
+      height: 40px;
+      border-radius: 8px;
+      margin-bottom: 8px;
     }
-    video {
-      margin-top: 25px;
-      width: 90%;
-      max-width: 900px;
-      background-color: #000;
+
+    .main-container {
+      display: flex;
+      gap: 30px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    #controls {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      flex: 1;
+      max-width: 500px;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    .video-section {
+      flex: 2;
+      animation: slideUp 0.8s ease-out;
+    }
+    
+    .controls-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      font-size: 0.9em;
+      color: #e0f2ff;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 12px 15px;
       border-radius: 10px;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      font-size: 1em;
+      transition: all 0.3s ease;
+    }
+    
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 20px rgba(102, 204, 255, 0.3);
+    }
+
+    select option {
+      background: #1a1a1a;
+      color: white;
+    }
+    
+    button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), #99ddff);
+      color: white;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 204, 255, 0.4);
+      margin-bottom: 10px;
+    }
+    
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 204, 255, 0.6);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    button:disabled {
+      background: rgba(255, 255, 255, 0.2);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+
+    .btn-change {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .button-group button {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    
+    #status {
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      text-align: center;
+      font-size: 0.95em;
+      border-left: 4px solid var(--accent);
+    }
+
+    .video-container {
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    video {
+      width: 100%;
+      display: block;
+      background: #000;
+      min-height: 400px;
+    }
+
+    .stats-bar {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 0.8em;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: var(--accent);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @media (max-width: 1024px) {
+      .main-container {
+        flex-direction: column;
+      }
+
+      #controls {
+        max-width: 100%;
+      }
+
+      .settings-panel {
+        width: 100%;
+        right: -100%;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>🎥 Transmisión en vivo</h1>
+  <button class="settings-btn" id="settingsBtn">⚙️</button>
 
-  <div id="controls">
-    <input type="text" id="roomId" placeholder="ID de la sala" />
-    <input type="password" id="password" placeholder="Contraseña" />
-    <select id="resolution">
-      <option value="default">Resolución por defecto</option>
-      <option value="hd">HD (1280x720)</option>
-      <option value="fullhd">Full HD (1920x1080)</option>
-    </select>
-    <select id="fps">
-      <option value="30">30 FPS</option>
-      <option value="60">60 FPS</option>
-    </select>
-    <button id="startBtn">Iniciar transmisión</button>
-    <div id="status">Esperando...</div>
+  <div class="settings-panel" id="settingsPanel">
+    <div class="settings-header">
+      <span class="settings-title">⚙️ Personalización</span>
+      <button class="close-settings" id="closeSettings">×</button>
+    </div>
+
+    <h3 style="margin-bottom: 15px; color: var(--accent);">🎨 Temas de color</h3>
+    <div class="theme-grid">
+      <div class="theme-option active" data-theme="default">
+        <div class="theme-preview" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div>
+        <div>Púrpura</div>
+      </div>
+      <div class="theme-option" data-theme="dark-blue">
+        <div class="theme-preview" style="background: linear-gradient(135deg, #1e3a8a, #1e40af);"></div>
+        <div>Azul Oscuro</div>
+      </div>
+      <div class="theme-option" data-theme="sunset">
+        <div class="theme-preview" style="background: linear-gradient(135deg, #f97316, #dc2626);"></div>
+        <div>Atardecer</div>
+      </div>
+      <div class="theme-option" data-theme="forest">
+        <div class="theme-preview" style="background: linear-gradient(135deg, #059669, #047857);"></div>
+        <div>Bosque</div>
+      </div>
+      <div class="theme-option" data-theme="ocean">
+        <div class="theme-preview" style="background: linear-gradient(135deg, #0891b2, #0e7490);"></div>
+        <div>Océano</div>
+      </div>
+      <div class="theme-option" data-theme="midnight">
+        <div class="theme-preview" style="background: linear-gradient(135deg, #1f2937, #111827);"></div>
+        <div>Medianoche</div>
+      </div>
+    </div>
   </div>
 
-  <video id="localVideo" autoplay playsinline muted></video>
+  <header>
+    <h1>🎥 StreamPro Emisor</h1>
+    <p class="subtitle">Transmisión profesional en vivo</p>
+  </header>
+
+  <div class="main-container">
+    <div id="controls">
+      <div class="controls-group">
+        <label>🔑 ID de la sala</label>
+        <input type="text" id="roomId" placeholder="Ingresa un ID único" autocomplete="off" />
+      </div>
+
+      <div class="controls-group">
+        <label>🔒 Contraseña</label>
+        <input type="password" id="password" placeholder="Crea una contraseña segura" />
+      </div>
+      
+      <div class="controls-group">
+        <label>📺 Resolución</label>
+        <select id="resolution">
+          <option value="default">Automática (recomendado)</option>
+          <optgroup label="Resoluciones SD">
+            <option value="480p">480p (854x480)</option>
+            <option value="540p">540p (960x540)</option>
+          </optgroup>
+          <optgroup label="Resoluciones HD">
+            <option value="720p">720p HD (1280x720)</option>
+            <option value="900p">900p HD+ (1600x900)</option>
+          </optgroup>
+          <optgroup label="Resoluciones Full HD">
+            <option value="1080p" selected>1080p Full HD (1920x1080)</option>
+          </optgroup>
+          <optgroup label="Resoluciones 2K/4K">
+            <option value="1440p">1440p 2K (2560x1440)</option>
+            <option value="2160p">2160p 4K (3840x2160)</option>
+          </optgroup>
+        </select>
+      </div>
+      
+      <div class="controls-group">
+        <label>🎬 Fotogramas por segundo</label>
+        <select id="fps">
+          <option value="15">15 FPS (bajo consumo)</option>
+          <option value="24">24 FPS (cinemático)</option>
+          <option value="30" selected>30 FPS (estándar)</option>
+          <option value="48">48 FPS (fluido)</option>
+          <option value="60">60 FPS (ultra fluido)</option>
+          <option value="120">120 FPS (gaming)</option>
+        </select>
+      </div>
+
+      <button id="startBtn">🚀 Iniciar transmisión</button>
+      
+      <div class="button-group" id="streamControls" style="display:none;">
+        <button id="changeSourceBtn" class="btn-change">🔄 Cambiar</button>
+        <button id="stopBtn" class="btn-secondary">⏹️ Detener</button>
+      </div>
+
+      <div id="status">⏳ Esperando...</div>
+    </div>
+
+    <div class="video-section">
+      <div class="video-container">
+        <video id="localVideo" autoplay playsinline muted></video>
+        <div class="stats-bar">
+          <div class="stat-item">
+            <div class="stat-label">Estado</div>
+            <div class="stat-value" id="streamStatus">Inactivo</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Calidad</div>
+            <div class="stat-value" id="qualityDisplay">--</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Duración</div>
+            <div class="stat-value" id="duration">00:00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
     const signalingUrl = "wss://cucaracha-server.onrender.com";
-    let ws, pc, stream;
+    let ws, pc, stream, currentRoomId, startTime, durationInterval;
 
     const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const changeSourceBtn = document.getElementById("changeSourceBtn");
     const statusEl = document.getElementById("status");
     const videoEl = document.getElementById("localVideo");
+    const streamControls = document.getElementById("streamControls");
+    const settingsBtn = document.getElementById("settingsBtn");
+    const settingsPanel = document.getElementById("settingsPanel");
+    const closeSettings = document.getElementById("closeSettings");
+
+    // Sistema de temas
+    const themeOptions = document.querySelectorAll('.theme-option');
+    const savedTheme = localStorage.getItem('streampro-theme') || 'default';
+    
+    document.body.className = savedTheme;
+    themeOptions.forEach(opt => {
+      if (opt.dataset.theme === savedTheme) {
+        opt.classList.add('active');
+      }
+      
+      opt.addEventListener('click', () => {
+        themeOptions.forEach(o => o.classList.remove('active'));
+        opt.classList.add('active');
+        document.body.className = opt.dataset.theme;
+        localStorage.setItem('streampro-theme', opt.dataset.theme);
+      });
+    });
+
+    settingsBtn.onclick = () => settingsPanel.classList.add('active');
+    closeSettings.onclick = () => settingsPanel.classList.remove('active');
+
+    function updateDuration() {
+      if (!startTime) return;
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
+      const secs = (elapsed % 60).toString().padStart(2, '0');
+      document.getElementById('duration').textContent = `${mins}:${secs}`;
+    }
 
     startBtn.onclick = async () => {
       const roomId = document.getElementById("roomId").value.trim();
@@ -103,16 +552,16 @@
         return;
       }
 
+      currentRoomId = roomId;
       statusEl.textContent = "🔌 Conectando con el servidor...";
+      document.getElementById('streamStatus').textContent = "Conectando";
       ws = new WebSocket(signalingUrl);
 
       ws.onopen = async () => {
         console.log("✅ Conectado al servidor de señalización (emisor)");
-
-        // Usar "create" para crear la sala
         ws.send(JSON.stringify({ type: "create", room: roomId, password }));
-
         statusEl.textContent = "📡 Esperando que se conecte el espectador...";
+        document.getElementById('streamStatus').textContent = "Esperando";
       };
 
       ws.onmessage = async (event) => {
@@ -120,10 +569,16 @@
 
         if (data.type === "ready") {
           console.log("👀 El espectador está listo, enviando oferta...");
-          startStreaming(roomId, fps, resolution);
+          await startStreaming(roomId, fps, resolution);
         } else if (data.type === "answer") {
           await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
           statusEl.textContent = "🎥 Transmitiendo en vivo";
+          document.getElementById('streamStatus').textContent = "En vivo";
+          startBtn.style.display = "none";
+          streamControls.style.display = "flex";
+          
+          startTime = Date.now();
+          durationInterval = setInterval(updateDuration, 1000);
         } else if (data.type === "ice-candidate") {
           try {
             await pc.addIceCandidate(data.candidate);
@@ -137,44 +592,163 @@
 
       ws.onclose = () => {
         statusEl.textContent = "❌ Desconectado del servidor";
+        document.getElementById('streamStatus').textContent = "Desconectado";
+        resetUI();
       };
     };
 
-    async function startStreaming(roomId, fps, resolution) {
+    changeSourceBtn.onclick = async () => {
+      if (!pc || !stream) return;
+
+      const resolution = document.getElementById("resolution").value;
+      const fps = parseInt(document.getElementById("fps").value);
+
+      statusEl.textContent = "🔄 Cambiando fuente...";
+
+      try {
+        stream.getTracks().forEach(track => track.stop());
+
+        const constraints = getConstraints(fps, resolution);
+        const newStream = await navigator.mediaDevices.getDisplayMedia(constraints);
+        
+        videoEl.srcObject = newStream;
+        stream = newStream;
+
+        const videoTrack = newStream.getVideoTracks()[0];
+        const audioTrack = newStream.getAudioTracks()[0];
+
+        const senders = pc.getSenders();
+        
+        const videoSender = senders.find(s => s.track && s.track.kind === 'video');
+        if (videoSender) {
+          await videoSender.replaceTrack(videoTrack);
+        }
+
+        if (audioTrack) {
+          const audioSender = senders.find(s => s.track && s.track.kind === 'audio');
+          if (audioSender) {
+            await audioSender.replaceTrack(audioTrack);
+          }
+        }
+
+        statusEl.textContent = "✅ Fuente cambiada - Transmitiendo";
+        console.log("✅ Fuente de video cambiada exitosamente");
+
+        stream.getVideoTracks()[0].onended = () => {
+          console.log("📺 Usuario detuvo compartir pantalla");
+          stopBtn.click();
+        };
+
+      } catch (err) {
+        console.error("Error al cambiar fuente:", err);
+        statusEl.textContent = "❌ Error al cambiar fuente";
+        alert("No se pudo cambiar la fuente. Intenta de nuevo.");
+      }
+    };
+
+    stopBtn.onclick = () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+      if (pc) {
+        pc.close();
+      }
+      if (ws) {
+        ws.close();
+      }
+      if (durationInterval) {
+        clearInterval(durationInterval);
+      }
+      videoEl.srcObject = null;
+      resetUI();
+      statusEl.textContent = "⏹️ Transmisión detenida";
+      document.getElementById('streamStatus').textContent = "Detenido";
+      document.getElementById('duration').textContent = "00:00";
+      document.getElementById('qualityDisplay').textContent = "--";
+    };
+
+    function getConstraints(fps, resolution) {
       const constraints = {
-        video: { frameRate: fps },
-        audio: true,
+        video: { 
+          frameRate: { ideal: fps, max: fps },
+          cursor: "always"
+        },
+        audio: true
       };
 
-      if (resolution === "hd") {
-        constraints.video.width = 1280;
-        constraints.video.height = 720;
-      } else if (resolution === "fullhd") {
-        constraints.video.width = 1920;
-        constraints.video.height = 1080;
+      const resolutions = {
+        '480p': { width: 854, height: 480 },
+        '540p': { width: 960, height: 540 },
+        '720p': { width: 1280, height: 720 },
+        '900p': { width: 1600, height: 900 },
+        '1080p': { width: 1920, height: 1080 },
+        '1440p': { width: 2560, height: 1440 },
+        '2160p': { width: 3840, height: 2160 }
+      };
+
+      if (resolution !== 'default' && resolutions[resolution]) {
+        constraints.video.width = { ideal: resolutions[resolution].width };
+        constraints.video.height = { ideal: resolutions[resolution].height };
       }
 
-      stream = await navigator.mediaDevices.getDisplayMedia(constraints);
-      videoEl.srcObject = stream;
+      return constraints;
+    }
 
-      pc = new RTCPeerConnection();
+    async function startStreaming(roomId, fps, resolution) {
+      const constraints = getConstraints(fps, resolution);
 
-      stream.getTracks().forEach((track) => pc.addTrack(track, stream));
+      try {
+        stream = await navigator.mediaDevices.getDisplayMedia(constraints);
+        videoEl.srcObject = stream;
 
-      pc.onicecandidate = (event) => {
-        if (event.candidate) {
-          ws.send(JSON.stringify({
-            type: "ice-candidate",
-            candidate: event.candidate,
-            room: roomId
-          }));
-        }
-      };
+        const track = stream.getVideoTracks()[0];
+        const settings = track.getSettings();
+        document.getElementById('qualityDisplay').textContent = 
+          `${settings.width}x${settings.height}@${settings.frameRate}fps`;
 
-      const offer = await pc.createOffer();
-      await pc.setLocalDescription(offer);
+        pc = new RTCPeerConnection({
+          iceServers: [
+            { urls: "stun:stun.l.google.com:19302" },
+            { urls: "stun:stun1.l.google.com:19302" }
+          ]
+        });
 
-      ws.send(JSON.stringify({ type: "offer", offer, room: roomId }));
+        stream.getTracks().forEach((track) => {
+          pc.addTrack(track, stream);
+        });
+
+        stream.getVideoTracks()[0].onended = () => {
+          console.log("📺 Usuario detuvo compartir pantalla");
+          stopBtn.click();
+        };
+
+        pc.onicecandidate = (event) => {
+          if (event.candidate) {
+            ws.send(JSON.stringify({
+              type: "ice-candidate",
+              candidate: event.candidate,
+              room: roomId
+            }));
+          }
+        };
+
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+
+        ws.send(JSON.stringify({ type: "offer", offer, room: roomId }));
+      } catch (err) {
+        console.error("Error iniciando streaming:", err);
+        statusEl.textContent = "❌ Error al compartir pantalla";
+        document.getElementById('streamStatus').textContent = "Error";
+        alert("No se pudo iniciar la transmisión. Asegúrate de dar permisos.");
+        resetUI();
+      }
+    }
+
+    function resetUI() {
+      startBtn.style.display = "block";
+      streamControls.style.display = "none";
+      startTime = null;
     }
   </script>
 </body>

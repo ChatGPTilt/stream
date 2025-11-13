@@ -795,34 +795,54 @@
     }
 
     function initializePeerConnection() {
-      // Configuración mejorada con servidores TURN
+      // Configuración mejorada con múltiples servidores TURN
       pc = new RTCPeerConnection({
         iceServers: [
+          // Servidores STUN de Google (múltiples para redundancia)
           { urls: "stun:stun.l.google.com:19302" },
           { urls: "stun:stun1.l.google.com:19302" },
           { urls: "stun:stun2.l.google.com:19302" },
           { urls: "stun:stun3.l.google.com:19302" },
           { urls: "stun:stun4.l.google.com:19302" },
-          // Servidores TURN públicos gratuitos
+          // Servidor STUN de Twilio
+          { urls: "stun:global.stun.twilio.com:3478" },
+          
+          // Servidores TURN - OpenRelay (múltiples puertos)
           {
-            urls: "turn:openrelay.metered.ca:80",
+            urls: [
+              "turn:openrelay.metered.ca:80",
+              "turn:openrelay.metered.ca:80?transport=tcp",
+              "turn:openrelay.metered.ca:443",
+              "turn:openrelay.metered.ca:443?transport=tcp"
+            ],
             username: "openrelayproject",
             credential: "openrelayproject"
           },
+          // Servidores TURN adicionales - Metered (alternativo)
           {
-            urls: "turn:openrelay.metered.ca:443",
-            username: "openrelayproject",
-            credential: "openrelayproject"
+            urls: [
+              "turn:a.relay.metered.ca:80",
+              "turn:a.relay.metered.ca:80?transport=tcp",
+              "turn:a.relay.metered.ca:443",
+              "turn:a.relay.metered.ca:443?transport=tcp"
+            ],
+            username: "87c4a8b8e928d97b360eec55",
+            credential: "F/WHZFGjGKurYCOM"
           },
+          // Servidor TURN de Numb (gratis)
           {
-            urls: "turn:openrelay.metered.ca:443?transport=tcp",
-            username: "openrelayproject",
-            credential: "openrelayproject"
+            urls: [
+              "turn:numb.viagenie.ca",
+              "turn:numb.viagenie.ca:3478?transport=tcp"
+            ],
+            username: "webrtc@live.com",
+            credential: "muazkh"
           }
         ],
         iceCandidatePoolSize: 10,
         bundlePolicy: 'max-bundle',
-        rtcpMuxPolicy: 'require'
+        rtcpMuxPolicy: 'require',
+        iceTransportPolicy: 'all' // Usar todos los candidatos disponibles
       });
 
       pc.onicecandidate = (event) => {
@@ -866,12 +886,13 @@
         document.getElementById("connState").textContent = state;
         
         if (state === "connected") {
-          statusEl.textContent = "✅ Conectado - Disfrutando la transmisión";
-          qualityEl.textContent = "Excelente";
-          updateConnectionStatus('connected', '✅ Conectado');
+          statusEl.textContent = "✅ Conectado - Transmisión en vivo";
+          qualityEl.textContent = "En vivo";
+          updateConnectionStatus('connected', '✅ En vivo');
           reconnectAttempts = 0;
         } else if (state === "connecting") {
           statusEl.textContent = "🔗 Estableciendo conexión...";
+          qualityEl.textContent = "Conectando...";
           updateConnectionStatus('checking', '🔄 Conectando...');
         } else if (state === "failed") {
           statusEl.textContent = "❌ Conexión fallida";
@@ -1022,13 +1043,25 @@
       }
     });
 
-    // Manejar eventos de audio
+    // Manejar eventos de audio y video
     videoEl.addEventListener('loadedmetadata', () => {
+      console.log("✅ Metadatos del video cargados");
+      statusEl.textContent = "✅ Transmisión en vivo";
+      qualityEl.textContent = "En vivo";
+      updateConnectionStatus('connected', '✅ En vivo');
+      
       const audioTracks = videoEl.srcObject?.getAudioTracks() || [];
       console.log(`🔊 Pistas de audio disponibles: ${audioTracks.length}`);
       audioTracks.forEach((track, index) => {
         console.log(`  Pista ${index}: ${track.label}, enabled: ${track.enabled}`);
       });
+    });
+
+    videoEl.addEventListener('playing', () => {
+      console.log("▶️ Video reproduciendo");
+      statusEl.textContent = "✅ Reproduciendo transmisión";
+      qualityEl.textContent = "En vivo";
+      updateConnectionStatus('connected', '✅ En vivo');
     });
   </script>
 </body>

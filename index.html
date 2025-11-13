@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transmisión en vivo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0f0f0f;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      color: #66ccff;
+    }
+    #controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(102, 204, 255, 0.3);
+    }
+    input, button, select {
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+    }
+    input, select {
+      width: 220px;
+      text-align: center;
+    }
+    button {
+      background-color: #66ccff;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover {
+      background-color: #99ddff;
+    }
+    #status {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #ccc;
+    }
+    video {
+      margin-top: 25px;
+      width: 90%;
+      max-width: 900px;
+      background-color: #000;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>🎥 Transmisión en vivo</h1>
+
+  <div id="controls">
+    <input type="text" id="roomId" placeholder="ID de la sala" />
+    <input type="password" id="password" placeholder="Contraseña" />
+    <select id="resolution">
+      <option value="default">Resolución por defecto</option>
+      <option value="hd">HD (1280x720)</option>
+      <option value="fullhd">Full HD (1920x1080)</option>
+    </select>
+    <select id="fps">
+      <option value="30">30 FPS</option>
+      <option value="60">60 FPS</option>
+    </select>
+    <button id="startBtn">Iniciar transmisión</button>
+    <div id="status">Esperando...</div>
+  </div>
+
+  <video id="localVideo" autoplay playsinline muted></video>
+
+  <script>
+    const signalingUrl = "wss://cucaracha-server.onrender.com";
+    let ws, pc, stream;
+
+    const startBtn = document.getElementById("startBtn");
+    const statusEl = document.getElementById("status");
+    const videoEl = document.getElementById("localVideo");
+
+    startBtn.onclick = async () => {
+      const roomId = document.getElementById("roomId").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const resolution = document.getElementById("resolution").value;
+      const fps = parseInt(document.getElementById("fps").value);
+
+      if (!roomId || !password) {
+        alert("Ingresa un ID de sala y una contraseña.");
+        return;
+      }
+
+      statusEl.textContent = "🔌 Conectando con el servidor...";
+      ws = new WebSocket(signalingUrl);
+
+      ws.onopen = async () => {
+        console.log("✅ Conectado al servidor de señalización (emisor)");
+
+        // Usar "create" para crear la sala
+        ws.send(JSON.stringify({ type: "create", room: roomId, password }));
+
+        statusEl.textContent = "📡 Esperando que se conecte el espectador...";
+      };
+
+      ws.onmessage = async (event) => {
+        const data = JSON.parse(event.data);
+
+        if (data.type === "ready") {
+          console.log("👀 El espectador está listo, enviando oferta...");
+          startStreaming(roomId, fps, resolution);
+        } else if (data.type === "answer") {
+          await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+          statusEl.textContent = "🎥 Transmitiendo en vivo";
+        } else if (data.type === "ice-candidate") {
+          try {
+            await pc.addIceCandidate(data.candidate);
+          } catch (err) {
+            console.error("Error ICE:", err);
+          }
+        } else if (data.type === "error") {
+          alert("⚠️ " + data.message);
+        }
+      };
+
+      ws.onclose = () => {
+        statusEl.textContent = "❌ Desconectado del servidor";
+      };
+    };
+
+    async function startStreaming(roomId, fps, resolution) {
+      const constraints = {
+        video: { frameRate: fps },
+        audio: true,
+      };
+
+      if (resolution === "hd") {
+        constraints.video.width = 1280;
+        constraints.video.height = 720;
+      } else if (resolution === "fullhd") {
+        constraints.video.width = 1920;
+        constraints.video.height = 1080;
+      }
+
+      stream = await navigator.mediaDevices.getDisplayMedia(constraints);
+      videoEl.srcObject = stream;
+
+      pc = new RTCPeerConnection();
+
+      stream.getTracks().forEach((track) => pc.addTrack(track, stream));
+
+      pc.onicecandidate = (event) => {
+        if (event.candidate) {
+          ws.send(JSON.stringify({
+            type: "ice-candidate",
+            candidate: event.candidate,
+            room: roomId
+          }));
+        }
+      };
+
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+
+      ws.send(JSON.stringify({ type: "offer", offer, room: roomId }));
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AngelitaTV</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0f0f0f;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      color: #ff66cc;
+    }
+    #controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 102, 204, 0.3);
+    }
+    input, button {
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+    }
+    input {
+      width: 220px;
+      text-align: center;
+    }
+    button {
+      background-color: #ff66cc;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover {
+      background-color: #ff99dd;
+    }
+    #status {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #ccc;
+    }
+    video {
+      margin-top: 25px;
+      width: 90%;
+      max-width: 900px;
+      background-color: #000;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    }
+    #volumeControl {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 15px;
+    }
+    #volumeSlider {
+      width: 200px;
+    }
+  </style>
+</head>
+<body>
+  <h1>📺 AngelitaTV</h1>
+
+  <div id="controls">
+    <input type="text" id="roomId" placeholder="ID de sala" />
+    <input type="password" id="password" placeholder="Contraseña" />
+    <button id="joinBtn">Conectarse</button>
+    <div id="status">Esperando conexión...</div>
+  </div>
+
+  <video id="remoteVideo" autoplay playsinline controls></video>
+
+  <div id="volumeControl" style="display:none;">
+    <label for="volumeSlider">🔊 Volumen</label>
+    <input type="range" id="volumeSlider" min="0" max="100" value="100" />
+  </div>
+
+  <script>
+    const signalingUrl = "wss://cucaracha-server.onrender.com";
+    let ws, pc, currentRoom;
+    const videoEl = document.getElementById("remoteVideo");
+    const joinBtn = document.getElementById("joinBtn");
+    const statusEl = document.getElementById("status");
+    const volumeSlider = document.getElementById("volumeSlider");
+    const volumeControl = document.getElementById("volumeControl");
+
+    joinBtn.onclick = async () => {
+      const roomId = document.getElementById("roomId").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!roomId || !password) {
+        alert("Ingresa la ID de sala y contraseña.");
+        return;
+      }
+
+      connectToRoom(roomId, password);
+    };
+
+    function connectToRoom(roomId, password) {
+      currentRoom = roomId;
+      statusEl.textContent = "🔌 Conectando a la transmisión...";
+      ws = new WebSocket(signalingUrl);
+
+      ws.onopen = () => {
+        console.log("✅ Conectado al servidor de señalización (viewer)");
+        
+        // Inicializar PeerConnection ANTES de enviar join
+        initializePeerConnection();
+        
+        // Ahora sí enviamos el join
+        ws.send(JSON.stringify({ type: "join", room: roomId, password }));
+        statusEl.textContent = "⏳ Esperando transmisión...";
+      };
+
+      ws.onmessage = async (event) => {
+        const data = JSON.parse(event.data);
+        console.log("📩 Mensaje recibido:", data.type);
+
+        if (data.type === "offer") {
+          console.log("📥 Oferta recibida, creando respuesta...");
+          statusEl.textContent = "🔗 Estableciendo conexión...";
+          
+          await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+          const answer = await pc.createAnswer();
+          await pc.setLocalDescription(answer);
+          
+          ws.send(JSON.stringify({ 
+            type: "answer", 
+            answer, 
+            room: currentRoom 
+          }));
+          
+          console.log("✅ Respuesta enviada");
+        } else if (data.type === "ice-candidate") {
+          console.log("🧊 Candidato ICE recibido");
+          try {
+            if (pc.remoteDescription) {
+              await pc.addIceCandidate(data.candidate);
+            }
+          } catch (err) {
+            console.error("❌ Error ICE:", err);
+          }
+        } else if (data.type === "error") {
+          statusEl.textContent = "❌ Error: " + data.message;
+          alert("⚠️ " + data.message);
+        }
+      };
+
+      ws.onerror = (error) => {
+        console.error("❌ Error WebSocket:", error);
+        statusEl.textContent = "❌ Error de conexión";
+      };
+
+      ws.onclose = () => {
+        console.log("🔌 WebSocket cerrado");
+        statusEl.textContent = "❌ Desconectado del servidor";
+      };
+    }
+
+    function initializePeerConnection() {
+      console.log("🔧 Inicializando PeerConnection...");
+      
+      pc = new RTCPeerConnection({
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:stun1.l.google.com:19302" }
+        ]
+      });
+
+      pc.onicecandidate = (event) => {
+        if (event.candidate) {
+          console.log("🧊 Enviando candidato ICE");
+          ws.send(JSON.stringify({
+            type: "ice-candidate",
+            candidate: event.candidate,
+            room: currentRoom
+          }));
+        }
+      };
+
+      pc.ontrack = (event) => {
+        console.log("🎥 Stream recibido!");
+        statusEl.textContent = "🎥 Viendo transmisión en vivo";
+        videoEl.srcObject = event.streams[0];
+        volumeControl.style.display = "flex";
+      };
+
+      pc.onconnectionstatechange = () => {
+        console.log("🔄 Estado de conexión:", pc.connectionState);
+        if (pc.connectionState === "connected") {
+          statusEl.textContent = "✅ Conectado - Transmisión activa";
+        } else if (pc.connectionState === "failed" || pc.connectionState === "disconnected") {
+          statusEl.textContent = "❌ Conexión perdida";
+        }
+      };
+
+      pc.oniceconnectionstatechange = () => {
+        console.log("🧊 Estado ICE:", pc.iceConnectionState);
+      };
+    }
+
+    volumeSlider.addEventListener("input", () => {
+      const volume = volumeSlider.value / 100;
+      videoEl.volume = volume;
+    });
+  </script>
+</body>
+</html>

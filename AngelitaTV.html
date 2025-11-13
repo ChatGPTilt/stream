@@ -3,136 +3,397 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AngelitaTV</title>
+  <title>AngelitaTV - Viewer</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #0f0f0f;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    h1 {
-      color: #ff66cc;
-    }
-    #controls {
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
-      background: #1a1a1a;
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(255, 102, 204, 0.3);
     }
-    input, button {
-      padding: 8px 10px;
-      border-radius: 6px;
-      border: none;
-      font-size: 14px;
-    }
-    input {
-      width: 220px;
+    
+    header {
       text-align: center;
+      margin-bottom: 30px;
+      animation: fadeIn 0.8s ease-in;
     }
-    button {
-      background-color: #ff66cc;
-      color: #fff;
-      cursor: pointer;
-      transition: 0.2s;
+    
+    h1 {
+      font-size: 3em;
+      background: linear-gradient(45deg, #ff66cc, #ff99dd, #ffccee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 5px;
+      text-shadow: 0 0 30px rgba(255, 102, 204, 0.5);
     }
-    button:hover {
-      background-color: #ff99dd;
+    
+    .subtitle {
+      font-size: 1.1em;
+      color: #ffccee;
+      opacity: 0.9;
     }
-    #status {
-      margin-top: 15px;
-      font-size: 14px;
-      color: #ccc;
+    
+    #controls {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      max-width: 400px;
+      width: 100%;
+      animation: slideUp 0.6s ease-out;
     }
-    video {
-      margin-top: 25px;
-      width: 90%;
-      max-width: 900px;
-      background-color: #000;
+    
+    .input-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      font-size: 0.9em;
+      color: #ffccee;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px 15px;
       border-radius: 10px;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-size: 1em;
+      transition: all 0.3s ease;
     }
-    #volumeControl {
+    
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #ff66cc;
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 20px rgba(255, 102, 204, 0.4);
+    }
+    
+    button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #ff66cc, #ff99dd);
+      color: #fff;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 102, 204, 0.4);
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 102, 204, 0.6);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    button:disabled {
+      background: rgba(255, 255, 255, 0.2);
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    #status {
+      margin-top: 20px;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      text-align: center;
+      font-size: 0.95em;
+      border-left: 4px solid #ff66cc;
+    }
+    
+    .video-container {
+      margin-top: 30px;
+      width: 100%;
+      max-width: 1200px;
+      position: relative;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      display: none;
+      animation: fadeIn 0.5s ease-in;
+    }
+    
+    .video-container.active {
+      display: block;
+    }
+    
+    video {
+      width: 100%;
+      display: block;
+      background: #000;
+    }
+    
+    .video-controls {
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+      padding: 20px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-top: 15px;
+      gap: 15px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
+    
+    .video-container:hover .video-controls {
+      opacity: 1;
+    }
+    
+    .volume-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+    
+    .volume-icon {
+      font-size: 1.5em;
+      cursor: pointer;
+    }
+    
     #volumeSlider {
-      width: 200px;
+      flex: 1;
+      max-width: 150px;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.3);
+      outline: none;
+      -webkit-appearance: none;
+    }
+    
+    #volumeSlider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #ff66cc;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(255, 102, 204, 0.6);
+    }
+    
+    #volumeSlider::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #ff66cc;
+      cursor: pointer;
+      border: none;
+    }
+    
+    .quality-indicator {
+      background: rgba(255, 102, 204, 0.2);
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      border: 1px solid rgba(255, 102, 204, 0.4);
+    }
+    
+    .fullscreen-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: #fff;
+      padding: 8px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.2em;
+      transition: all 0.3s ease;
+    }
+    
+    .fullscreen-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .stats {
+      display: none;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 0.85em;
+      line-height: 1.6;
+      min-width: 200px;
+    }
+    
+    .stats.active {
+      display: block;
+    }
+    
+    .stats-title {
+      color: #ff66cc;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2em;
+      }
+      
+      #controls {
+        padding: 20px;
+      }
+      
+      .video-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>📺 AngelitaTV</h1>
+  <header>
+    <h1>📺 AngelitaTV</h1>
+    <p class="subtitle">Transmisión en vivo privada</p>
+  </header>
 
   <div id="controls">
-    <input type="text" id="roomId" placeholder="ID de sala" />
-    <input type="password" id="password" placeholder="Contraseña" />
-    <button id="joinBtn">Conectarse</button>
-    <div id="status">Esperando conexión...</div>
+    <div class="input-group">
+      <label for="roomId">🔑 ID de Sala</label>
+      <input type="text" id="roomId" placeholder="Ingresa el código de sala" autocomplete="off" />
+    </div>
+    
+    <div class="input-group">
+      <label for="password">🔒 Contraseña</label>
+      <input type="password" id="password" placeholder="Contraseña de acceso" />
+    </div>
+    
+    <button id="joinBtn">
+      <span id="btnText">🎬 Conectarse a la transmisión</span>
+    </button>
+    
+    <div id="status">⏳ Esperando conexión...</div>
   </div>
 
-  <video id="remoteVideo" autoplay playsinline controls></video>
-
-  <div id="volumeControl" style="display:none;">
-    <label for="volumeSlider">🔊 Volumen</label>
-    <input type="range" id="volumeSlider" min="0" max="100" value="100" />
+  <div class="video-container" id="videoContainer">
+    <video id="remoteVideo" autoplay playsinline></video>
+    
+    <div class="stats" id="stats">
+      <div class="stats-title">📊 Estadísticas</div>
+      <div>Estado: <span id="connState">Conectando...</span></div>
+      <div>Bitrate: <span id="bitrate">-- kbps</span></div>
+      <div>FPS: <span id="fpsDisplay">--</span></div>
+      <div>Resolución: <span id="resolution">--</span></div>
+    </div>
+    
+    <div class="video-controls">
+      <div class="volume-control">
+        <span class="volume-icon" id="volumeIcon">🔊</span>
+        <input type="range" id="volumeSlider" min="0" max="100" value="100" />
+      </div>
+      
+      <div class="quality-indicator">
+        <span id="quality">Conectando...</span>
+      </div>
+      
+      <button class="fullscreen-btn" id="fullscreenBtn" title="Pantalla completa">⛶</button>
+      <button class="fullscreen-btn" id="statsBtn" title="Ver estadísticas">📊</button>
+    </div>
   </div>
 
   <script>
     const signalingUrl = "wss://cucaracha-server.onrender.com";
     let ws, pc, currentRoom;
+    let statsInterval;
+    
     const videoEl = document.getElementById("remoteVideo");
+    const videoContainer = document.getElementById("videoContainer");
     const joinBtn = document.getElementById("joinBtn");
     const statusEl = document.getElementById("status");
     const volumeSlider = document.getElementById("volumeSlider");
-    const volumeControl = document.getElementById("volumeControl");
+    const volumeIcon = document.getElementById("volumeIcon");
+    const fullscreenBtn = document.getElementById("fullscreenBtn");
+    const statsBtn = document.getElementById("statsBtn");
+    const statsPanel = document.getElementById("stats");
+    const qualityEl = document.getElementById("quality");
 
     joinBtn.onclick = async () => {
       const roomId = document.getElementById("roomId").value.trim();
       const password = document.getElementById("password").value.trim();
 
       if (!roomId || !password) {
-        alert("Ingresa la ID de sala y contraseña.");
+        statusEl.textContent = "⚠️ Por favor ingresa ID y contraseña";
         return;
       }
 
+      joinBtn.disabled = true;
+      document.getElementById("btnText").textContent = "⏳ Conectando...";
       connectToRoom(roomId, password);
     };
 
     function connectToRoom(roomId, password) {
       currentRoom = roomId;
-      statusEl.textContent = "🔌 Conectando a la transmisión...";
+      statusEl.textContent = "🔌 Conectando al servidor...";
       ws = new WebSocket(signalingUrl);
 
       ws.onopen = () => {
-        console.log("✅ Conectado al servidor de señalización (viewer)");
-        
-        // Inicializar PeerConnection ANTES de enviar join
+        console.log("✅ Conectado al servidor");
         initializePeerConnection();
-        
-        // Ahora sí enviamos el join
         ws.send(JSON.stringify({ type: "join", room: roomId, password }));
         statusEl.textContent = "⏳ Esperando transmisión...";
+        qualityEl.textContent = "Esperando...";
       };
 
       ws.onmessage = async (event) => {
         const data = JSON.parse(event.data);
-        console.log("📩 Mensaje recibido:", data.type);
+        console.log("📩 Mensaje:", data.type);
 
         if (data.type === "offer") {
-          console.log("📥 Oferta recibida, creando respuesta...");
+          console.log("📥 Recibiendo transmisión...");
           statusEl.textContent = "🔗 Estableciendo conexión...";
+          qualityEl.textContent = "Conectando...";
           
           await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
           const answer = await pc.createAnswer();
@@ -144,9 +405,7 @@
             room: currentRoom 
           }));
           
-          console.log("✅ Respuesta enviada");
         } else if (data.type === "ice-candidate") {
-          console.log("🧊 Candidato ICE recibido");
           try {
             if (pc.remoteDescription) {
               await pc.addIceCandidate(data.candidate);
@@ -155,25 +414,26 @@
             console.error("❌ Error ICE:", err);
           }
         } else if (data.type === "error") {
-          statusEl.textContent = "❌ Error: " + data.message;
-          alert("⚠️ " + data.message);
+          statusEl.textContent = "❌ " + data.message;
+          qualityEl.textContent = "Error";
+          joinBtn.disabled = false;
+          document.getElementById("btnText").textContent = "🎬 Reintentar";
         }
       };
 
-      ws.onerror = (error) => {
-        console.error("❌ Error WebSocket:", error);
-        statusEl.textContent = "❌ Error de conexión";
+      ws.onerror = () => {
+        statusEl.textContent = "❌ Error de conexión al servidor";
+        joinBtn.disabled = false;
       };
 
       ws.onclose = () => {
-        console.log("🔌 WebSocket cerrado");
         statusEl.textContent = "❌ Desconectado del servidor";
+        qualityEl.textContent = "Desconectado";
+        if (statsInterval) clearInterval(statsInterval);
       };
     }
 
     function initializePeerConnection() {
-      console.log("🔧 Inicializando PeerConnection...");
-      
       pc = new RTCPeerConnection({
         iceServers: [
           { urls: "stun:stun.l.google.com:19302" },
@@ -183,7 +443,6 @@
 
       pc.onicecandidate = (event) => {
         if (event.candidate) {
-          console.log("🧊 Enviando candidato ICE");
           ws.send(JSON.stringify({
             type: "ice-candidate",
             candidate: event.candidate,
@@ -194,28 +453,111 @@
 
       pc.ontrack = (event) => {
         console.log("🎥 Stream recibido!");
-        statusEl.textContent = "🎥 Viendo transmisión en vivo";
         videoEl.srcObject = event.streams[0];
-        volumeControl.style.display = "flex";
+        videoContainer.classList.add("active");
+        statusEl.textContent = "✅ Transmisión en vivo";
+        qualityEl.textContent = "En vivo";
+        
+        // Iniciar monitoreo de estadísticas
+        startStatsMonitoring();
       };
 
       pc.onconnectionstatechange = () => {
-        console.log("🔄 Estado de conexión:", pc.connectionState);
-        if (pc.connectionState === "connected") {
-          statusEl.textContent = "✅ Conectado - Transmisión activa";
-        } else if (pc.connectionState === "failed" || pc.connectionState === "disconnected") {
+        const state = pc.connectionState;
+        console.log("🔄 Estado:", state);
+        document.getElementById("connState").textContent = state;
+        
+        if (state === "connected") {
+          statusEl.textContent = "✅ Conectado - Disfrutando la transmisión";
+          qualityEl.textContent = "Excelente";
+        } else if (state === "failed" || state === "disconnected") {
           statusEl.textContent = "❌ Conexión perdida";
+          qualityEl.textContent = "Desconectado";
+          videoContainer.classList.remove("active");
         }
-      };
-
-      pc.oniceconnectionstatechange = () => {
-        console.log("🧊 Estado ICE:", pc.iceConnectionState);
       };
     }
 
+    async function startStatsMonitoring() {
+      statsInterval = setInterval(async () => {
+        if (!pc) return;
+        
+        const stats = await pc.getStats();
+        stats.forEach(report => {
+          if (report.type === 'inbound-rtp' && report.kind === 'video') {
+            // Bitrate
+            if (report.bytesReceived) {
+              const bitrate = Math.round(report.bytesReceived * 8 / 1000);
+              document.getElementById("bitrate").textContent = bitrate + " kbps";
+            }
+            
+            // FPS
+            if (report.framesPerSecond) {
+              document.getElementById("fpsDisplay").textContent = Math.round(report.framesPerSecond);
+            }
+            
+            // Resolución
+            if (report.frameWidth && report.frameHeight) {
+              document.getElementById("resolution").textContent = 
+                report.frameWidth + "x" + report.frameHeight;
+            }
+          }
+        });
+      }, 1000);
+    }
+
+    // Control de volumen
     volumeSlider.addEventListener("input", () => {
       const volume = volumeSlider.value / 100;
       videoEl.volume = volume;
+      
+      if (volume === 0) {
+        volumeIcon.textContent = "🔇";
+      } else if (volume < 0.5) {
+        volumeIcon.textContent = "🔉";
+      } else {
+        volumeIcon.textContent = "🔊";
+      }
+    });
+
+    volumeIcon.addEventListener("click", () => {
+      if (videoEl.volume > 0) {
+        videoEl.volume = 0;
+        volumeSlider.value = 0;
+        volumeIcon.textContent = "🔇";
+      } else {
+        videoEl.volume = 1;
+        volumeSlider.value = 100;
+        volumeIcon.textContent = "🔊";
+      }
+    });
+
+    // Pantalla completa
+    fullscreenBtn.addEventListener("click", () => {
+      if (!document.fullscreenElement) {
+        videoContainer.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    });
+
+    // Mostrar/ocultar estadísticas
+    statsBtn.addEventListener("click", () => {
+      statsPanel.classList.toggle("active");
+    });
+
+    // Atajos de teclado
+    document.addEventListener("keydown", (e) => {
+      if (!videoContainer.classList.contains("active")) return;
+      
+      if (e.key === "f" || e.key === "F") {
+        fullscreenBtn.click();
+      } else if (e.key === " ") {
+        e.preventDefault();
+        videoEl.paused ? videoEl.play() : videoEl.pause();
+      } else if (e.key === "m" || e.key === "M") {
+        volumeIcon.click();
+      }
     });
   </script>
 </body>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Diablito Stream</title>
+  <title>StreamPro - Emisor</title>
   <style>
     :root {
       --primary: #667eea;
@@ -238,6 +238,33 @@
     .controls-group {
       margin-bottom: 20px;
     }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .checkbox-group:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .checkbox-group label {
+      margin: 0;
+      cursor: pointer;
+      flex: 1;
+    }
     
     label {
       display: block;
@@ -247,7 +274,7 @@
       font-weight: 500;
     }
     
-    input, select {
+    input:not([type="checkbox"]), select {
       width: 100%;
       padding: 12px 15px;
       border-radius: 10px;
@@ -329,6 +356,16 @@
       text-align: center;
       font-size: 0.95em;
       border-left: 4px solid var(--accent);
+    }
+
+    .info-box {
+      background: rgba(255, 204, 0, 0.2);
+      border: 1px solid rgba(255, 204, 0, 0.4);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 20px;
+      font-size: 0.85em;
+      line-height: 1.5;
     }
 
     .video-container {
@@ -443,12 +480,16 @@
   </div>
 
   <header>
-    <h1>🎥 Diablito Stream</h1>
+    <h1>🎥 StreamPro Emisor</h1>
     <p class="subtitle">Transmisión profesional en vivo</p>
   </header>
 
   <div class="main-container">
     <div id="controls">
+      <div class="info-box">
+        💡 <strong>Importante:</strong> Activa "Compartir audio" en la ventana de selección para transmitir sonido del sistema.
+      </div>
+
       <div class="controls-group">
         <label>🔑 ID de la sala</label>
         <input type="text" id="roomId" placeholder="Ingresa un ID único" autocomplete="off" />
@@ -483,6 +524,13 @@
           <option value="60">60 FPS (ultra fluido)</option>
           <option value="120">120 FPS (gaming)</option>
         </select>
+      </div>
+
+      <div class="controls-group">
+        <div class="checkbox-group">
+          <input type="checkbox" id="systemAudio" checked />
+          <label for="systemAudio">🔊 Compartir audio del sistema</label>
+        </div>
       </div>
 
       <button id="startBtn">🚀 Iniciar transmisión</button>
@@ -549,7 +597,6 @@
       });
     });
 
-    // Abrir/cerrar panel de configuración
     function openSettings() {
       settingsPanel.classList.add('active');
       settingsOverlay.classList.add('active');
@@ -659,6 +706,8 @@
           const audioSender = senders.find(s => s.track && s.track.kind === 'audio');
           if (audioSender) {
             await audioSender.replaceTrack(audioTrack);
+          } else {
+            pc.addTrack(audioTrack, stream);
           }
         }
 
@@ -699,12 +748,14 @@
     };
 
     function getConstraints(fps, resolution) {
+      const systemAudio = document.getElementById("systemAudio").checked;
+      
       const constraints = {
         video: { 
           frameRate: { ideal: fps, max: fps },
           cursor: "always"
         },
-        audio: true
+        audio: systemAudio
       };
 
       const resolutions = {
@@ -734,14 +785,38 @@
 
         const track = stream.getVideoTracks()[0];
         const settings = track.getSettings();
+        const audioTracks = stream.getAudioTracks();
+        const audioStatus = audioTracks.length > 0 ? " 🔊" : " 🔇";
+        
         document.getElementById('qualityDisplay').textContent = 
-          `${settings.width}x${settings.height}@${settings.frameRate}fps`;
+          `${settings.width}x${settings.height}@${settings.frameRate}fps${audioStatus}`;
 
+        // Configuración mejorada de ICE con servidores TURN públicos
         pc = new RTCPeerConnection({
           iceServers: [
             { urls: "stun:stun.l.google.com:19302" },
-            { urls: "stun:stun1.l.google.com:19302" }
-          ]
+            { urls: "stun:stun1.l.google.com:19302" },
+            { urls: "stun:stun2.l.google.com:19302" },
+            { urls: "stun:stun3.l.google.com:19302" },
+            { urls: "stun:stun4.l.google.com:19302" },
+            // Servidores TURN públicos gratuitos
+            {
+              urls: "turn:openrelay.metered.ca:80",
+              username: "openrelayproject",
+              credential: "openrelayproject"
+            },
+            {
+              urls: "turn:openrelay.metered.ca:443",
+              username: "openrelayproject",
+              credential: "openrelayproject"
+            },
+            {
+              urls: "turn:openrelay.metered.ca:443?transport=tcp",
+              username: "openrelayproject",
+              credential: "openrelayproject"
+            }
+          ],
+          iceCandidatePoolSize: 10
         });
 
         stream.getTracks().forEach((track) => {
@@ -755,11 +830,20 @@
 
         pc.onicecandidate = (event) => {
           if (event.candidate) {
+            console.log("📤 Enviando candidato ICE:", event.candidate.type);
             ws.send(JSON.stringify({
               type: "ice-candidate",
               candidate: event.candidate,
               room: roomId
             }));
+          }
+        };
+
+        pc.oniceconnectionstatechange = () => {
+          console.log("🔗 Estado ICE:", pc.iceConnectionState);
+          if (pc.iceConnectionState === 'failed') {
+            console.error("❌ Conexión ICE falló, intentando reiniciar...");
+            pc.restartIce();
           }
         };
 
@@ -771,7 +855,15 @@
         console.error("Error iniciando streaming:", err);
         statusEl.textContent = "❌ Error al compartir pantalla";
         document.getElementById('streamStatus').textContent = "Error";
-        alert("No se pudo iniciar la transmisión. Asegúrate de dar permisos.");
+        
+        if (err.name === 'NotAllowedError') {
+          alert("⚠️ Permisos denegados. Por favor, permite compartir pantalla y audio.");
+        } else if (err.name === 'NotFoundError') {
+          alert("⚠️ No se encontró ninguna pantalla para compartir.");
+        } else {
+          alert("⚠️ No se pudo iniciar la transmisión. Asegúrate de dar permisos y seleccionar 'Compartir audio' en la ventana.");
+        }
+        
         resetUI();
       }
     }

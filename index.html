@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StreamPro - Emisor</title>
+  <title>Diablito Stream</title>
   <style>
     :root {
       --primary: #667eea;
@@ -109,6 +109,25 @@
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
     }
 
+    .settings-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      z-index: 998;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .settings-overlay.active {
+      display: block;
+      opacity: 1;
+    }
+
     .settings-panel {
       position: fixed;
       top: 0;
@@ -151,6 +170,11 @@
       padding: 0;
       width: 30px;
       height: 30px;
+      transition: transform 0.2s ease;
+    }
+
+    .close-settings:hover {
+      transform: scale(1.2);
     }
 
     .theme-grid {
@@ -381,6 +405,8 @@
 <body>
   <button class="settings-btn" id="settingsBtn">⚙️</button>
 
+  <div class="settings-overlay" id="settingsOverlay"></div>
+
   <div class="settings-panel" id="settingsPanel">
     <div class="settings-header">
       <span class="settings-title">⚙️ Personalización</span>
@@ -417,7 +443,7 @@
   </div>
 
   <header>
-    <h1>🎥 StreamPro Emisor</h1>
+    <h1>🎥 Diablito Stream</h1>
     <p class="subtitle">Transmisión profesional en vivo</p>
   </header>
 
@@ -437,21 +463,13 @@
         <label>📺 Resolución</label>
         <select id="resolution">
           <option value="default">Automática (recomendado)</option>
-          <optgroup label="Resoluciones SD">
-            <option value="480p">480p (854x480)</option>
-            <option value="540p">540p (960x540)</option>
-          </optgroup>
-          <optgroup label="Resoluciones HD">
-            <option value="720p">720p HD (1280x720)</option>
-            <option value="900p">900p HD+ (1600x900)</option>
-          </optgroup>
-          <optgroup label="Resoluciones Full HD">
-            <option value="1080p" selected>1080p Full HD (1920x1080)</option>
-          </optgroup>
-          <optgroup label="Resoluciones 2K/4K">
-            <option value="1440p">1440p 2K (2560x1440)</option>
-            <option value="2160p">2160p 4K (3840x2160)</option>
-          </optgroup>
+          <option value="480p">480p SD (854x480)</option>
+          <option value="540p">540p SD+ (960x540)</option>
+          <option value="720p">720p HD (1280x720)</option>
+          <option value="900p">900p HD+ (1600x900)</option>
+          <option value="1080p" selected>1080p Full HD (1920x1080)</option>
+          <option value="1440p">1440p 2K (2560x1440)</option>
+          <option value="2160p">2160p 4K (3840x2160)</option>
         </select>
       </div>
       
@@ -510,6 +528,7 @@
     const streamControls = document.getElementById("streamControls");
     const settingsBtn = document.getElementById("settingsBtn");
     const settingsPanel = document.getElementById("settingsPanel");
+    const settingsOverlay = document.getElementById("settingsOverlay");
     const closeSettings = document.getElementById("closeSettings");
 
     // Sistema de temas
@@ -530,8 +549,20 @@
       });
     });
 
-    settingsBtn.onclick = () => settingsPanel.classList.add('active');
-    closeSettings.onclick = () => settingsPanel.classList.remove('active');
+    // Abrir/cerrar panel de configuración
+    function openSettings() {
+      settingsPanel.classList.add('active');
+      settingsOverlay.classList.add('active');
+    }
+
+    function closeSettingsPanel() {
+      settingsPanel.classList.remove('active');
+      settingsOverlay.classList.remove('active');
+    }
+
+    settingsBtn.onclick = openSettings;
+    closeSettings.onclick = closeSettingsPanel;
+    settingsOverlay.onclick = closeSettingsPanel;
 
     function updateDuration() {
       if (!startTime) return;

@@ -791,32 +791,54 @@
         document.getElementById('qualityDisplay').textContent = 
           `${settings.width}x${settings.height}@${settings.frameRate}fps${audioStatus}`;
 
-        // Configuración mejorada de ICE con servidores TURN públicos
+        // Configuración mejorada de ICE con múltiples servidores TURN
         pc = new RTCPeerConnection({
           iceServers: [
+            // Servidores STUN de Google (múltiples para redundancia)
             { urls: "stun:stun.l.google.com:19302" },
             { urls: "stun:stun1.l.google.com:19302" },
             { urls: "stun:stun2.l.google.com:19302" },
             { urls: "stun:stun3.l.google.com:19302" },
             { urls: "stun:stun4.l.google.com:19302" },
-            // Servidores TURN públicos gratuitos
+            // Servidor STUN de Twilio
+            { urls: "stun:global.stun.twilio.com:3478" },
+            
+            // Servidores TURN - OpenRelay (múltiples puertos)
             {
-              urls: "turn:openrelay.metered.ca:80",
+              urls: [
+                "turn:openrelay.metered.ca:80",
+                "turn:openrelay.metered.ca:80?transport=tcp",
+                "turn:openrelay.metered.ca:443",
+                "turn:openrelay.metered.ca:443?transport=tcp"
+              ],
               username: "openrelayproject",
               credential: "openrelayproject"
             },
+            // Servidores TURN adicionales - Metered (alternativo)
             {
-              urls: "turn:openrelay.metered.ca:443",
-              username: "openrelayproject",
-              credential: "openrelayproject"
+              urls: [
+                "turn:a.relay.metered.ca:80",
+                "turn:a.relay.metered.ca:80?transport=tcp",
+                "turn:a.relay.metered.ca:443",
+                "turn:a.relay.metered.ca:443?transport=tcp"
+              ],
+              username: "87c4a8b8e928d97b360eec55",
+              credential: "F/WHZFGjGKurYCOM"
             },
+            // Servidor TURN de Numb (gratis)
             {
-              urls: "turn:openrelay.metered.ca:443?transport=tcp",
-              username: "openrelayproject",
-              credential: "openrelayproject"
+              urls: [
+                "turn:numb.viagenie.ca",
+                "turn:numb.viagenie.ca:3478?transport=tcp"
+              ],
+              username: "webrtc@live.com",
+              credential: "muazkh"
             }
           ],
-          iceCandidatePoolSize: 10
+          iceCandidatePoolSize: 10,
+          bundlePolicy: 'max-bundle',
+          rtcpMuxPolicy: 'require',
+          iceTransportPolicy: 'all' // Usar todos los candidatos disponibles
         });
 
         stream.getTracks().forEach((track) => {

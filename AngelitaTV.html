@@ -855,6 +855,11 @@
           }));
         } else {
           console.log("✅ Todos los candidatos ICE enviados");
+          // Enviar señal de que terminamos de recopilar candidatos
+          ws.send(JSON.stringify({
+            type: "ice-candidate-complete",
+            room: currentRoom
+          }));
         }
       };
 

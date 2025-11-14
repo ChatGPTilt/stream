@@ -858,16 +858,38 @@
               candidate: event.candidate,
               room: roomId
             }));
+          } else {
+            console.log("✅ Todos los candidatos ICE recopilados");
+            // Enviar señal de que terminamos de recopilar candidatos
+            ws.send(JSON.stringify({
+              type: "ice-candidate-complete",
+              room: roomId
+            }));
           }
         };
 
         pc.oniceconnectionstatechange = () => {
           console.log("🔗 Estado ICE:", pc.iceConnectionState);
-          if (pc.iceConnectionState === 'failed') {
+          if (pc.iceConnectionState === 'connected' || pc.iceConnectionState === 'completed') {
+            console.log("✅ Conexión ICE establecida exitosamente");
+            statusEl.textContent = "✅ Conexión establecida - Transmitiendo";
+            document.getElementById('streamStatus').textContent = "Conectado";
+          } else if (pc.iceConnectionState === 'failed') {
             console.error("❌ Conexión ICE falló, intentando reiniciar...");
             pc.restartIce();
+          } else if (pc.iceConnectionState === 'disconnected') {
+            console.warn("⚠️ Conexión ICE desconectada temporalmente");
+            statusEl.textContent = "⚠️ Reconectando...";
           }
         };
+
+        // Agregar timeout para la respuesta
+        const answerTimeout = setTimeout(() => {
+          if (pc.iceConnectionState !== 'connected' && pc.iceConnectionState !== 'completed') {
+            console.error("⚠️ No se recibió respuesta del viewer - posible problema de conectividad");
+            alert("⚠️ El viewer no responde. Verifica que esté conectado correctamente.");
+          }
+        }, 30000); // 30 segundos de espera
 
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);

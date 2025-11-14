@@ -729,38 +729,56 @@
 
       ws.onmessage = async (event) => {
         const data = JSON.parse(event.data);
-        console.log("📩 Mensaje:", data.type);
+        console.log("📩 Mensaje recibido:", data.type);
 
         if (data.type === "offer") {
-          console.log("📥 Recibiendo transmisión...");
-          statusEl.textContent = "🔗 Estableciendo conexión...";
+          console.log("📥 Oferta recibida del emisor");
+          statusEl.textContent = "🔗 Procesando oferta...";
           qualityEl.textContent = "Conectando...";
           updateConnectionStatus('checking', '🔄 Conectando...');
           
           try {
+            console.log("Estableciendo descripción remota...");
             await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
-            const answer = await pc.createAnswer();
-            await pc.setLocalDescription(answer);
+            console.log("✅ Descripción remota establecida");
             
+            console.log("Creando respuesta...");
+            const answer = await pc.createAnswer();
+            console.log("✅ Respuesta creada");
+            
+            await pc.setLocalDescription(answer);
+            console.log("✅ Descripción local establecida");
+            
+            console.log("📤 Enviando respuesta al emisor...");
             ws.send(JSON.stringify({ 
               type: "answer", 
               answer, 
               room: currentRoom 
             }));
+            console.log("✅ Respuesta enviada exitosamente");
+            
+            statusEl.textContent = "⏳ Esperando stream de video...";
+            qualityEl.textContent = "Esperando...";
+            
           } catch (err) {
             console.error("❌ Error al procesar oferta:", err);
-            statusEl.textContent = "❌ Error al establecer conexión";
+            statusEl.textContent = "❌ Error al establecer conexión: " + err.message;
             updateConnectionStatus('failed', '❌ Error');
+            alert("Error al procesar la oferta: " + err.message);
           }
           
         } else if (data.type === "ice-candidate") {
-          try {
-            if (pc && pc.remoteDescription) {
-              await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-              console.log("✅ Candidato ICE agregado:", data.candidate.type);
+          if (data.candidate) {
+            try {
+              if (pc && pc.remoteDescription) {
+                await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+                console.log("✅ Candidato ICE agregado:", data.candidate.type);
+              } else {
+                console.warn("⚠️ Esperando establecer descripción remota antes de agregar candidatos");
+              }
+            } catch (err) {
+              console.error("❌ Error al agregar candidato ICE:", err);
             }
-          } catch (err) {
-            console.error("❌ Error ICE:", err);
           }
         } else if (data.type === "error") {
           statusEl.textContent = "❌ " + data.message;
@@ -768,6 +786,7 @@
           updateConnectionStatus('failed', '❌ ' + data.message);
           joinBtn.disabled = false;
           document.getElementById("btnText").textContent = "🎬 Reintentar";
+          alert(data.message);
         }
       };
 
@@ -864,22 +883,37 @@
       };
 
       pc.ontrack = (event) => {
-        console.log("🎥 Stream recibido!");
+        console.log("🎥 ¡Evento ontrack disparado!");
+        console.log("Stream recibido:", event.streams[0]);
+        console.log("Tracks en el stream:", event.streams[0].getTracks().length);
+        
         videoEl.srcObject = event.streams[0];
         videoContainer.classList.add("active");
         connectionStatus.classList.add("active");
         
         // Actualizar estado inmediatamente
-        statusEl.textContent = "✅ Transmisión recibida";
-        qualityEl.textContent = "Cargando...";
+        statusEl.textContent = "✅ Stream conectado - Cargando video...";
+        qualityEl.textContent = "Buffering...";
         updateConnectionStatus('connected', '✅ Recibiendo');
         
         // Verificar si hay audio
         const audioTracks = event.streams[0].getAudioTracks();
+        const videoTracks = event.streams[0].getVideoTracks();
+        
+        console.log(`Video tracks: ${videoTracks.length}`);
+        console.log(`Audio tracks: ${audioTracks.length}`);
+        
         if (audioTracks.length === 0) {
           console.warn("⚠️ No se detectó pista de audio");
         } else {
           console.log("✅ Pista de audio detectada");
+        }
+        
+        if (videoTracks.length === 0) {
+          console.error("❌ No se detectó pista de video!");
+          statusEl.textContent = "❌ No hay video en la transmisión";
+        } else {
+          console.log("✅ Pista de video detectada");
         }
         
         startStatsMonitoring();
@@ -1051,9 +1085,12 @@
     // Manejar eventos de audio y video
     videoEl.addEventListener('loadedmetadata', () => {
       console.log("✅ Metadatos del video cargados");
-      statusEl.textContent = "✅ Transmisión en vivo";
-      qualityEl.textContent = "En vivo";
-      updateConnectionStatus('connected', '✅ En vivo');
+      console.log(`Dimensiones: ${videoEl.videoWidth}x${videoEl.videoHeight}`);
+      console.log(`Duración: ${videoEl.duration}`);
+      
+      statusEl.textContent = "✅ Video cargado - Iniciando reproducción...";
+      qualityEl.textContent = "Iniciando...";
+      updateConnectionStatus('connected', '✅ Cargado');
       
       const audioTracks = videoEl.srcObject?.getAudioTracks() || [];
       console.log(`🔊 Pistas de audio disponibles: ${audioTracks.length}`);
@@ -1062,11 +1099,38 @@
       });
     });
 
+    videoEl.addEventListener('loadeddata', () => {
+      console.log("📊 Datos del video cargados - Listo para reproducir");
+    });
+
+    videoEl.addEventListener('canplay', () => {
+      console.log("▶️ Video puede reproducirse");
+      statusEl.textContent = "✅ Listo para reproducir";
+    });
+
     videoEl.addEventListener('playing', () => {
-      console.log("▶️ Video reproduciendo");
-      statusEl.textContent = "✅ Reproduciendo transmisión";
+      console.log("▶️ Video reproduciendo exitosamente");
+      statusEl.textContent = "✅ Reproduciendo transmisión en vivo";
       qualityEl.textContent = "En vivo";
       updateConnectionStatus('connected', '✅ En vivo');
+    });
+
+    videoEl.addEventListener('waiting', () => {
+      console.log("⏳ Video en buffering...");
+      statusEl.textContent = "⏳ Buffering...";
+      qualityEl.textContent = "Buffering...";
+    });
+
+    videoEl.addEventListener('error', (e) => {
+      console.error("❌ Error en el elemento video:", e);
+      console.error("Error code:", videoEl.error?.code);
+      console.error("Error message:", videoEl.error?.message);
+      statusEl.textContent = "❌ Error al reproducir video";
+      updateConnectionStatus('failed', '❌ Error video');
+    });
+
+    videoEl.addEventListener('stalled', () => {
+      console.warn("⚠️ Reproducción estancada");
     });
   </script>
 </body>

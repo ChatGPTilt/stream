@@ -567,6 +567,9 @@
   <script>
     const signalingUrl = "wss://cucaracha-server.onrender.com";
     let ws, pc, stream, currentRoomId, startTime, durationInterval;
+    
+    // 🔥 Cola para candidatos ICE que llegan antes del answer
+    const iceCandidateQueue = [];
 
     const startBtn = document.getElementById("startBtn");
     const stopBtn = document.getElementById("stopBtn");
@@ -648,12 +651,28 @@
 
         if (data.type === "ready") {
           console.log("👀 El espectador está listo, enviando oferta...");
+          // 🔥 Limpiar cola al iniciar nueva conexión
+          iceCandidateQueue.length = 0;
           await startStreaming(roomId, fps, resolution);
+          
         } else if (data.type === "answer") {
           console.log("📥 Respuesta recibida del viewer");
           try {
             await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
             console.log("✅ Respuesta establecida correctamente");
+            
+            // 🔥 Procesar candidatos ICE en cola
+            console.log(`📦 Procesando ${iceCandidateQueue.length} candidatos ICE en cola`);
+            while (iceCandidateQueue.length > 0) {
+              const candidate = iceCandidateQueue.shift();
+              try {
+                await pc.addIceCandidate(new RTCIceCandidate(candidate));
+                console.log("✅ Candidato ICE en cola procesado");
+              } catch (error) {
+                console.error("❌ Error al procesar candidato en cola:", error);
+              }
+            }
+            
             statusEl.textContent = "🎥 Transmitiendo en vivo";
             document.getElementById('streamStatus').textContent = "En vivo";
             startBtn.style.display = "none";
@@ -665,13 +684,20 @@
             console.error("❌ Error al establecer respuesta:", err);
             statusEl.textContent = "❌ Error en la negociación";
           }
+          
         } else if (data.type === "ice-candidate") {
-          if (pc && data.candidate) {
-            try {
-              await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-              console.log("✅ Candidato ICE agregado:", data.candidate.type);
-            } catch (err) {
-              console.error("❌ Error al agregar candidato ICE:", err);
+          if (data.candidate) {
+            // 🔥 Si no hay descripción remota, guardar en cola
+            if (!pc.remoteDescription) {
+              console.log("⏳ Candidato ICE en cola (esperando answer)");
+              iceCandidateQueue.push(data.candidate);
+            } else {
+              try {
+                await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+                console.log("✅ Candidato ICE agregado:", data.candidate.type);
+              } catch (err) {
+                console.error("❌ Error al agregar candidato ICE:", err);
+              }
             }
           }
         } else if (data.type === "error") {
@@ -752,6 +778,8 @@
         clearInterval(durationInterval);
       }
       videoEl.srcObject = null;
+      // 🔥 Limpiar cola al detener
+      iceCandidateQueue.length = 0;
       resetUI();
       statusEl.textContent = "⏹️ Transmisión detenida";
       document.getElementById('streamStatus').textContent = "Detenido";
@@ -803,19 +831,14 @@
         document.getElementById('qualityDisplay').textContent = 
           `${settings.width}x${settings.height}@${settings.frameRate}fps${audioStatus}`;
 
-        // Configuración mejorada de ICE con múltiples servidores TURN
         pc = new RTCPeerConnection({
           iceServers: [
-            // Servidores STUN de Google (múltiples para redundancia)
             { urls: "stun:stun.l.google.com:19302" },
             { urls: "stun:stun1.l.google.com:19302" },
             { urls: "stun:stun2.l.google.com:19302" },
             { urls: "stun:stun3.l.google.com:19302" },
             { urls: "stun:stun4.l.google.com:19302" },
-            // Servidor STUN de Twilio
             { urls: "stun:global.stun.twilio.com:3478" },
-            
-            // Servidores TURN - OpenRelay (múltiples puertos)
             {
               urls: [
                 "turn:openrelay.metered.ca:80",
@@ -826,7 +849,6 @@
               username: "openrelayproject",
               credential: "openrelayproject"
             },
-            // Servidores TURN adicionales - Metered (alternativo)
             {
               urls: [
                 "turn:a.relay.metered.ca:80",
@@ -837,7 +859,6 @@
               username: "87c4a8b8e928d97b360eec55",
               credential: "F/WHZFGjGKurYCOM"
             },
-            // Servidor TURN de Numb (gratis)
             {
               urls: [
                 "turn:numb.viagenie.ca",
@@ -850,7 +871,7 @@
           iceCandidatePoolSize: 10,
           bundlePolicy: 'max-bundle',
           rtcpMuxPolicy: 'require',
-          iceTransportPolicy: 'all' // Usar todos los candidatos disponibles
+          iceTransportPolicy: 'all'
         });
 
         stream.getTracks().forEach((track) => {
@@ -872,11 +893,6 @@
             }));
           } else {
             console.log("✅ Todos los candidatos ICE recopilados");
-            // Enviar señal de que terminamos de recopilar candidatos
-            ws.send(JSON.stringify({
-              type: "ice-candidate-complete",
-              room: roomId
-            }));
           }
         };
 
@@ -894,14 +910,6 @@
             statusEl.textContent = "⚠️ Reconectando...";
           }
         };
-
-        // Agregar timeout para la respuesta
-        const answerTimeout = setTimeout(() => {
-          if (pc.iceConnectionState !== 'connected' && pc.iceConnectionState !== 'completed') {
-            console.error("⚠️ No se recibió respuesta del viewer - posible problema de conectividad");
-            alert("⚠️ El viewer no responde. Verifica que esté conectado correctamente.");
-          }
-        }, 30000); // 30 segundos de espera
 
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);

@@ -477,7 +477,8 @@
       statsInterval: null,
       reconnectAttempts: 0,
       iceCandidateQueue: [],
-      playTimeout: null
+      playTimeout: null,
+      streamConfigured: false
     };
 
     const elements = {
@@ -623,6 +624,12 @@
         state.pc.ontrack = (e) => {
           console.log("🎥 ========== ONTRACK DISPARADO ==========");
           
+          // Evitar configurar el stream múltiples veces
+          if (state.streamConfigured) {
+            console.log("⚠️ Stream ya configurado, ignorando ontrack duplicado");
+            return;
+          }
+          
           // Limpiar timeout
           if (state.playTimeout) {
             clearTimeout(state.playTimeout);
@@ -651,6 +658,9 @@
             return;
           }
           
+          // Marcar como configurado ANTES de asignar el stream
+          state.streamConfigured = true;
+          
           console.log("📺 Asignando stream al elemento video...");
           elements.video.srcObject = stream;
           
@@ -660,18 +670,20 @@
           
           console.log("▶️ Intentando reproducir...");
           
-          // Forzar reproducción del video
-          elements.video.play().then(() => {
-            console.log("✅ Reproducción iniciada automáticamente");
-            utils.updateStatus("✅ Reproduciendo transmisión en vivo", "En vivo");
-            utils.updateConnectionStatus('connected', '✅ En vivo');
-            elements.playOverlay.classList.remove('active');
-          }).catch(err => {
-            console.error("⚠️ Autoplay bloqueado:", err.name, err.message);
-            console.log("💡 Mostrando botón de reproducción manual");
-            utils.updateStatus("⚠️ Haz clic en el botón ▶ para reproducir", "Pausado");
-            elements.playOverlay.classList.add('active');
-          });
+          // Esperar un momento para que el video cargue
+          setTimeout(() => {
+            elements.video.play().then(() => {
+              console.log("✅ Reproducción iniciada automáticamente");
+              utils.updateStatus("✅ Reproduciendo transmisión en vivo", "En vivo");
+              utils.updateConnectionStatus('connected', '✅ En vivo');
+              elements.playOverlay.classList.remove('active');
+            }).catch(err => {
+              console.error("⚠️ Autoplay bloqueado:", err.name, err.message);
+              console.log("💡 Mostrando botón de reproducción manual");
+              utils.updateStatus("⚠️ Haz clic en el botón ▶ para reproducir", "Pausado");
+              elements.playOverlay.classList.add('active');
+            });
+          }, 100);
           
           console.log("📊 Iniciando monitoreo de estadísticas...");
           statsManager.start();
@@ -976,6 +988,7 @@
       document.getElementById("btnText").textContent = "⏳ Conectando...";
       state.reconnectAttempts = 0;
       state.iceCandidateQueue.length = 0;
+      state.streamConfigured = false; // Resetear bandera
       connectWebSocket(roomId, password);
     };
 

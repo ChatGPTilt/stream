@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>StreamPro - Emisor</title>
+  <link rel="icon" href="data:,">
   <style>
     :root {
       --primary: #667eea;
@@ -522,14 +523,16 @@
 
         state.stream.getTracks().forEach(track => state.pc.addTrack(track, state.stream));
 
-        state.pc.onicecandidate = (e) => {
+        state.        pc.onicecandidate = (e) => {
           if (e.candidate) {
-            console.log("📤 Enviando candidato ICE:", e.candidate.type);
+            console.log("📤 Enviando candidato ICE al viewer:", e.candidate.type);
             state.ws.send(JSON.stringify({
               type: "ice-candidate",
               candidate: e.candidate,
               room: roomId
             }));
+          } else {
+            console.log("✅ Todos los candidatos ICE recopilados");
           }
         };
 
@@ -574,24 +577,33 @@
       },
 
       async handleAnswer(answer) {
-        await state.pc.setRemoteDescription(new RTCSessionDescription(answer));
-        console.log(`📦 Procesando ${state.iceCandidateQueue.length} candidatos ICE en cola`);
-        
-        while (state.iceCandidateQueue.length > 0) {
-          const candidate = state.iceCandidateQueue.shift();
-          try {
-            await state.pc.addIceCandidate(new RTCIceCandidate(candidate));
-          } catch (error) {
-            console.error("❌ Error al procesar candidato:", error);
+        try {
+          console.log("⏳ Estableciendo descripción remota (answer)...");
+          await state.pc.setRemoteDescription(new RTCSessionDescription(answer));
+          console.log("✅ Respuesta establecida correctamente");
+          
+          // Procesar candidatos ICE en cola
+          console.log(`📦 Procesando ${state.iceCandidateQueue.length} candidatos ICE en cola`);
+          while (state.iceCandidateQueue.length > 0) {
+            const candidate = state.iceCandidateQueue.shift();
+            try {
+              await state.pc.addIceCandidate(new RTCIceCandidate(candidate));
+              console.log("✅ Candidato ICE en cola procesado:", candidate.type);
+            } catch (error) {
+              console.error("❌ Error al procesar candidato en cola:", error);
+            }
           }
+          
+          utils.updateStatus("🎥 Transmitiendo en vivo", "En vivo");
+          elements.startBtn.style.display = "none";
+          elements.streamControls.style.display = "flex";
+          
+          state.startTime = Date.now();
+          state.durationInterval = setInterval(utils.updateDuration, 1000);
+        } catch (err) {
+          console.error("❌ Error al establecer respuesta:", err);
+          utils.updateStatus("❌ Error en la negociación");
         }
-        
-        utils.updateStatus("🎥 Transmitiendo en vivo", "En vivo");
-        elements.startBtn.style.display = "none";
-        elements.streamControls.style.display = "flex";
-        
-        state.startTime = Date.now();
-        state.durationInterval = setInterval(utils.updateDuration, 1000);
       },
 
       handleIceCandidate(candidate) {
@@ -618,20 +630,25 @@
         utils.updateStatus("📡 Esperando espectador...", "Esperando");
       };
 
-      state.ws.onmessage = async (e) => {
+      state.      ws.onmessage = async (e) => {
         const data = JSON.parse(e.data);
         console.log("📨 Mensaje recibido:", data.type);
 
         switch(data.type) {
           case "ready":
+            console.log("👀 El espectador está listo, enviando oferta...");
             state.iceCandidateQueue.length = 0;
             await rtcManager.startStreaming(roomId, fps, resolution);
             break;
           case "answer":
+            console.log("📥 Respuesta recibida del viewer");
             await rtcManager.handleAnswer(data.answer);
             break;
           case "ice-candidate":
-            if (data.candidate) rtcManager.handleIceCandidate(data.candidate);
+            if (data.candidate) {
+              console.log("📨 Candidato ICE recibido:", data.candidate.type);
+              rtcManager.handleIceCandidate(data.candidate);
+            }
             break;
           case "error":
             alert("⚠️ " + data.message);

@@ -310,6 +310,34 @@
     .connection-status.connected { border: 2px solid #10b981; color: #10b981; }
     .connection-status.failed { border: 2px solid #ef4444; color: #ef4444; }
 
+    .play-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      cursor: pointer;
+    }
+
+    .play-overlay.active { display: flex; }
+
+    .play-button {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 4px solid white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3em;
+      transition: transform 0.3s ease;
+    }
+
+    .play-button:hover { transform: scale(1.1); }
+
     .video-container:fullscreen { width: 100vw; height: 100vh; max-width: 100vw; border-radius: 0; }
     .video-container:fullscreen video { width: 100%; height: 100%; object-fit: contain; }
     
@@ -444,7 +472,8 @@
       roomId: null,
       statsInterval: null,
       reconnectAttempts: 0,
-      iceCandidateQueue: []
+      iceCandidateQueue: [],
+      playTimeout: null
     };
 
     const elements = {
@@ -583,16 +612,46 @@
         };
 
         state.pc.ontrack = (e) => {
-          console.log("🎥 Stream recibido");
+          console.log("🎥 ¡Stream recibido! Configurando video...");
+          console.log("Streams disponibles:", e.streams.length);
+          console.log("Tracks en el stream:", e.streams[0].getTracks().length);
+          
           elements.video.srcObject = e.streams[0];
           elements.container.classList.add("active");
           elements.connectionStatus.classList.add("active");
           
-          utils.updateStatus("✅ Stream conectado - Cargando video...", "Buffering...");
-          utils.updateConnectionStatus('connected', '✅ Recibiendo');
-          
           const audioTracks = e.streams[0].getAudioTracks();
-          console.log(`🔊 Audio: ${audioTracks.length > 0 ? 'Sí' : 'No'}`);
+          const videoTracks = e.streams[0].getVideoTracks();
+          
+          console.log(`📹 Video tracks: ${videoTracks.length}`);
+          console.log(`🔊 Audio tracks: ${audioTracks.length}`);
+          
+          if (videoTracks.length === 0) {
+            console.error("❌ No hay pistas de video en el stream!");
+            utils.updateStatus("❌ No hay video en la transmisión");
+            return;
+          }
+          
+          // Verificar si el video se está reproduciendo
+          state.playTimeout = setTimeout(() => {
+            if (elements.video.paused || elements.video.readyState < 2) {
+              console.warn("⚠️ Video no se está reproduciendo automáticamente. Intentando forzar...");
+              elements.video.play().catch(err => {
+                console.error("❌ No se pudo reproducir:", err);
+                utils.updateStatus("⚠️ Haz clic en el video para reproducir", "Esperando");
+              });
+            }
+          }, 2000);
+          
+          // Forzar reproducción del video
+          elements.video.play().then(() => {
+            console.log("✅ Reproducción iniciada manualmente");
+            utils.updateStatus("✅ Reproduciendo transmisión en vivo", "En vivo");
+            utils.updateConnectionStatus('connected', '✅ En vivo');
+          }).catch(err => {
+            console.error("❌ Error al iniciar reproducción:", err);
+            utils.updateStatus("⚠️ Haz clic en el video para reproducir", "Pausado");
+          });
           
           statsManager.start();
         };
@@ -762,25 +821,43 @@
         
         // Eventos de video
         elements.video.addEventListener('loadedmetadata', () => {
-          console.log(`✅ Video: ${elements.video.videoWidth}x${elements.video.videoHeight}`);
-          utils.updateStatus("✅ Video cargado - Iniciando reproducción...", "Iniciando...");
-          utils.updateConnectionStatus('connected', '✅ Cargado');
+          console.log(`✅ Metadatos cargados: ${elements.video.videoWidth}x${elements.video.videoHeight}`);
+          utils.updateStatus("✅ Video cargado - Reproduciendo...", "Buffering...");
+          utils.updateConnectionStatus('connected', '✅ Cargando');
+        });
+
+        elements.video.addEventListener('loadeddata', () => {
+          console.log("📊 Datos del video listos");
+        });
+
+        elements.video.addEventListener('canplay', () => {
+          console.log("▶️ Video listo para reproducir");
+          utils.updateStatus("✅ Listo para reproducir", "Listo");
         });
 
         elements.video.addEventListener('playing', () => {
-          console.log("▶️ Reproduciendo");
+          console.log("✅ Video REPRODUCIENDO AHORA");
           utils.updateStatus("✅ Reproduciendo transmisión en vivo", "En vivo");
           utils.updateConnectionStatus('connected', '✅ En vivo');
         });
 
         elements.video.addEventListener('waiting', () => {
+          console.log("⏳ Buffering...");
           utils.updateStatus("⏳ Buffering...", "Buffering...");
         });
 
         elements.video.addEventListener('error', (e) => {
-          console.error("❌ Error video:", elements.video.error);
+          console.error("❌ Error en video:", elements.video.error);
           utils.updateStatus("❌ Error al reproducir video");
           utils.updateConnectionStatus('failed', '❌ Error video');
+        });
+
+        elements.video.addEventListener('stalled', () => {
+          console.warn("⚠️ Reproducción estancada");
+        });
+
+        elements.video.addEventListener('suspend', () => {
+          console.log("⏸️ Reproducción suspendida");
         });
       },
 

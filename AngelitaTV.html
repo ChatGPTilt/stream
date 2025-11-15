@@ -668,28 +668,8 @@
           elements.container.classList.add("active");
           elements.connectionStatus.classList.add("active");
           
-          console.log("▶️ Intentando reproducir...");
-          
-          // Esperar un momento para que el video cargue
-          setTimeout(() => {
-            console.log("🎬 Intentando reproducir video...");
-            console.log("Video paused:", elements.video.paused);
-            console.log("Video readyState:", elements.video.readyState);
-            console.log("Video networkState:", elements.video.networkState);
-            
-            elements.video.play().then(() => {
-              console.log("✅ Reproducción iniciada automáticamente");
-              console.log("Video paused after play:", elements.video.paused);
-              utils.updateStatus("✅ Reproduciendo transmisión en vivo", "En vivo");
-              utils.updateConnectionStatus('connected', '✅ En vivo');
-              elements.playOverlay.classList.remove('active');
-            }).catch(err => {
-              console.error("⚠️ Autoplay bloqueado:", err.name, err.message);
-              console.log("💡 Mostrando botón de reproducción manual");
-              utils.updateStatus("⚠️ Haz clic en el botón ▶ para reproducir", "Pausado");
-              elements.playOverlay.classList.add('active');
-            });
-          }, 100);
+          console.log("⏳ Esperando evento loadedmetadata para reproducir...");
+          utils.updateStatus("⏳ Cargando video...", "Cargando");
           
           console.log("📊 Iniciando monitoreo de estadísticas...");
           statsManager.start();
@@ -884,15 +864,36 @@
         });
 
         elements.video.addEventListener('loadedmetadata', () => {
-          console.log(`✅ loadedmetadata - ${elements.video.videoWidth}x${elements.video.videoHeight}`);
+          console.log("✅✅✅ loadedmetadata - METADATOS CARGADOS ✅✅✅");
+          console.log(`Dimensiones: ${elements.video.videoWidth}x${elements.video.videoHeight}`);
           console.log("Duration:", elements.video.duration);
-          utils.updateStatus("✅ Video cargado - Reproduciendo...", "Buffering...");
+          console.log("readyState:", elements.video.readyState);
+          console.log("paused:", elements.video.paused);
+          
+          utils.updateStatus("✅ Video cargado - Iniciando...", "Cargando");
           utils.updateConnectionStatus('connected', '✅ Cargando');
+          
+          // Intentar reproducir ahora que los metadatos están cargados
+          console.log("🎬 Intentando reproducir después de loadedmetadata...");
+          
+          elements.video.play().then(() => {
+            console.log("✅ play() exitoso - reproducción iniciada");
+            console.log("Video paused después de play():", elements.video.paused);
+            utils.updateStatus("✅ Reproduciendo transmisión en vivo", "En vivo");
+            utils.updateConnectionStatus('connected', '✅ En vivo');
+            elements.playOverlay.classList.remove('active');
+          }).catch(err => {
+            console.error("⚠️ play() falló:", err.name, err.message);
+            console.log("💡 Mostrando botón de reproducción manual");
+            utils.updateStatus("⚠️ Haz clic en el botón ▶ para reproducir", "Pausado");
+            elements.playOverlay.classList.add('active');
+          });
         });
 
         elements.video.addEventListener('loadeddata', () => {
           console.log("📊 loadeddata - Primer frame cargado");
           console.log("readyState:", elements.video.readyState);
+          console.log("networkState:", elements.video.networkState);
         });
 
         elements.video.addEventListener('canplay', () => {

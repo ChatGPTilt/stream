@@ -9,17 +9,11 @@
       --primary: #667eea;
       --secondary: #764ba2;
       --accent: #66ccff;
-      --bg-dark: #0f0f0f;
-      --bg-card: #1a1a1a;
       --text: #ffffff;
       --text-muted: #aaaaaa;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -32,35 +26,11 @@
       transition: background 0.5s ease;
     }
 
-    body.dark-blue {
-      --primary: #1e3a8a;
-      --secondary: #1e40af;
-      --accent: #3b82f6;
-    }
-
-    body.sunset {
-      --primary: #f97316;
-      --secondary: #dc2626;
-      --accent: #fb923c;
-    }
-
-    body.forest {
-      --primary: #059669;
-      --secondary: #047857;
-      --accent: #10b981;
-    }
-
-    body.ocean {
-      --primary: #0891b2;
-      --secondary: #0e7490;
-      --accent: #06b6d4;
-    }
-
-    body.midnight {
-      --primary: #1f2937;
-      --secondary: #111827;
-      --accent: #6366f1;
-    }
+    body.dark-blue { --primary: #1e3a8a; --secondary: #1e40af; --accent: #3b82f6; }
+    body.sunset { --primary: #f97316; --secondary: #dc2626; --accent: #fb923c; }
+    body.forest { --primary: #059669; --secondary: #047857; --accent: #10b981; }
+    body.ocean { --primary: #0891b2; --secondary: #0e7490; --accent: #06b6d4; }
+    body.midnight { --primary: #1f2937; --secondary: #111827; --accent: #6366f1; }
     
     header {
       text-align: center;
@@ -78,11 +48,7 @@
       text-shadow: 0 0 30px rgba(102, 204, 255, 0.5);
     }
     
-    .subtitle {
-      font-size: 1.1em;
-      color: #e0f2ff;
-      opacity: 0.9;
-    }
+    .subtitle { font-size: 1.1em; color: #e0f2ff; opacity: 0.9; }
 
     .settings-btn {
       position: fixed;
@@ -104,17 +70,11 @@
       justify-content: center;
     }
 
-    .settings-btn:hover {
-      transform: rotate(90deg) scale(1.1);
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
-    }
+    .settings-btn:hover { transform: rotate(90deg) scale(1.1); box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); }
 
     .settings-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
       background: rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(5px);
       z-index: 998;
@@ -123,10 +83,7 @@
       transition: opacity 0.3s ease;
     }
 
-    .settings-overlay.active {
-      display: block;
-      opacity: 1;
-    }
+    .settings-overlay.active { display: block; opacity: 1; }
 
     .settings-panel {
       position: fixed;
@@ -143,9 +100,7 @@
       overflow-y: auto;
     }
 
-    .settings-panel.active {
-      right: 0;
-    }
+    .settings-panel.active { right: 0; }
 
     .settings-header {
       display: flex;
@@ -156,10 +111,7 @@
       border-bottom: 2px solid rgba(255, 255, 255, 0.1);
     }
 
-    .settings-title {
-      font-size: 1.5em;
-      color: var(--accent);
-    }
+    .settings-title { font-size: 1.5em; color: var(--accent); }
 
     .close-settings {
       background: none;
@@ -173,16 +125,9 @@
       transition: transform 0.2s ease;
     }
 
-    .close-settings:hover {
-      transform: scale(1.2);
-    }
+    .close-settings:hover { transform: scale(1.2); }
 
-    .theme-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-      margin-bottom: 30px;
-    }
+    .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px; }
 
     .theme-option {
       padding: 15px;
@@ -193,30 +138,11 @@
       text-align: center;
     }
 
-    .theme-option:hover {
-      transform: translateY(-3px);
-      border-color: var(--accent);
-    }
+    .theme-option:hover { transform: translateY(-3px); border-color: var(--accent); }
+    .theme-option.active { border-color: var(--accent); background: rgba(102, 204, 255, 0.2); }
+    .theme-preview { width: 100%; height: 40px; border-radius: 8px; margin-bottom: 8px; }
 
-    .theme-option.active {
-      border-color: var(--accent);
-      background: rgba(102, 204, 255, 0.2);
-    }
-
-    .theme-preview {
-      width: 100%;
-      height: 40px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-    }
-
-    .main-container {
-      display: flex;
-      gap: 30px;
-      max-width: 1400px;
-      margin: 0 auto;
-      width: 100%;
-    }
+    .main-container { display: flex; gap: 30px; max-width: 1400px; margin: 0 auto; width: 100%; }
 
     #controls {
       background: rgba(255, 255, 255, 0.1);
@@ -230,14 +156,8 @@
       animation: slideUp 0.6s ease-out;
     }
 
-    .video-section {
-      flex: 2;
-      animation: slideUp 0.8s ease-out;
-    }
-    
-    .controls-group {
-      margin-bottom: 20px;
-    }
+    .video-section { flex: 2; animation: slideUp 0.8s ease-out; }
+    .controls-group { margin-bottom: 20px; }
 
     .checkbox-group {
       display: flex;
@@ -250,29 +170,11 @@
       transition: all 0.3s ease;
     }
 
-    .checkbox-group:hover {
-      background: rgba(255, 255, 255, 0.15);
-    }
-
-    .checkbox-group input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
-    }
-
-    .checkbox-group label {
-      margin: 0;
-      cursor: pointer;
-      flex: 1;
-    }
+    .checkbox-group:hover { background: rgba(255, 255, 255, 0.15); }
+    .checkbox-group input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+    .checkbox-group label { margin: 0; cursor: pointer; flex: 1; }
     
-    label {
-      display: block;
-      font-size: 0.9em;
-      color: #e0f2ff;
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
+    label { display: block; font-size: 0.9em; color: #e0f2ff; margin-bottom: 8px; font-weight: 500; }
     
     input:not([type="checkbox"]), select {
       width: 100%;
@@ -285,9 +187,7 @@
       transition: all 0.3s ease;
     }
     
-    input::placeholder {
-      color: rgba(255, 255, 255, 0.6);
-    }
+    input::placeholder { color: rgba(255, 255, 255, 0.6); }
     
     input:focus, select:focus {
       outline: none;
@@ -296,10 +196,7 @@
       box-shadow: 0 0 20px rgba(102, 204, 255, 0.3);
     }
 
-    select option {
-      background: #1a1a1a;
-      color: white;
-    }
+    select option { background: #1a1a1a; color: white; }
     
     button {
       width: 100%;
@@ -316,38 +213,14 @@
       margin-bottom: 10px;
     }
     
-    button:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 204, 255, 0.6);
-    }
-    
-    button:active {
-      transform: translateY(0);
-    }
-    
-    button:disabled {
-      background: rgba(255, 255, 255, 0.2);
-      cursor: not-allowed;
-      transform: none;
-    }
+    button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102, 204, 255, 0.6); }
+    button:active { transform: translateY(0); }
+    button:disabled { background: rgba(255, 255, 255, 0.2); cursor: not-allowed; transform: none; }
 
-    .btn-secondary {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-    }
-
-    .btn-change {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-    }
-
-    .button-group {
-      display: flex;
-      gap: 10px;
-    }
-
-    .button-group button {
-      flex: 1;
-      margin-bottom: 0;
-    }
+    .btn-secondary { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .btn-change { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .button-group { display: flex; gap: 10px; }
+    .button-group button { flex: 1; margin-bottom: 0; }
     
     #status {
       padding: 12px;
@@ -376,12 +249,7 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    video {
-      width: 100%;
-      display: block;
-      background: #000;
-      min-height: 400px;
-    }
+    video { width: 100%; display: block; background: #000; min-height: 400px; }
 
     .stats-bar {
       background: rgba(0, 0, 0, 0.8);
@@ -391,57 +259,22 @@
       border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .stat-item {
-      text-align: center;
-    }
-
-    .stat-label {
-      font-size: 0.8em;
-      color: var(--text-muted);
-      margin-bottom: 5px;
-    }
-
-    .stat-value {
-      font-size: 1.2em;
-      font-weight: bold;
-      color: var(--accent);
-    }
+    .stat-item { text-align: center; }
+    .stat-label { font-size: 0.8em; color: var(--text-muted); margin-bottom: 5px; }
+    .stat-value { font-size: 1.2em; font-weight: bold; color: var(--accent); }
     
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     
     @media (max-width: 1024px) {
-      .main-container {
-        flex-direction: column;
-      }
-
-      #controls {
-        max-width: 100%;
-      }
-
-      .settings-panel {
-        width: 100%;
-        right: -100%;
-      }
+      .main-container { flex-direction: column; }
+      #controls { max-width: 100%; }
+      .settings-panel { width: 100%; right: -100%; }
     }
   </style>
 </head>
 <body>
   <button class="settings-btn" id="settingsBtn">⚙️</button>
-
   <div class="settings-overlay" id="settingsOverlay"></div>
 
   <div class="settings-panel" id="settingsPanel">
@@ -505,24 +338,18 @@
         <select id="resolution">
           <option value="default">Automática (recomendado)</option>
           <option value="480p">480p SD (854x480)</option>
-          <option value="540p">540p SD+ (960x540)</option>
           <option value="720p">720p HD (1280x720)</option>
-          <option value="900p">900p HD+ (1600x900)</option>
           <option value="1080p" selected>1080p Full HD (1920x1080)</option>
           <option value="1440p">1440p 2K (2560x1440)</option>
-          <option value="2160p">2160p 4K (3840x2160)</option>
         </select>
       </div>
       
       <div class="controls-group">
         <label>🎬 Fotogramas por segundo</label>
         <select id="fps">
-          <option value="15">15 FPS (bajo consumo)</option>
           <option value="24">24 FPS (cinemático)</option>
           <option value="30" selected>30 FPS (estándar)</option>
-          <option value="48">48 FPS (fluido)</option>
-          <option value="60">60 FPS (ultra fluido)</option>
-          <option value="120">120 FPS (gaming)</option>
+          <option value="60">60 FPS (fluido)</option>
         </select>
       </div>
 
@@ -565,64 +392,262 @@
   </div>
 
   <script>
-    const signalingUrl = "wss://cucaracha-server.onrender.com";
-    let ws, pc, stream, currentRoomId, startTime, durationInterval;
-    
-    // 🔥 Cola para candidatos ICE que llegan antes del answer
-    const iceCandidateQueue = [];
-
-    const startBtn = document.getElementById("startBtn");
-    const stopBtn = document.getElementById("stopBtn");
-    const changeSourceBtn = document.getElementById("changeSourceBtn");
-    const statusEl = document.getElementById("status");
-    const videoEl = document.getElementById("localVideo");
-    const streamControls = document.getElementById("streamControls");
-    const settingsBtn = document.getElementById("settingsBtn");
-    const settingsPanel = document.getElementById("settingsPanel");
-    const settingsOverlay = document.getElementById("settingsOverlay");
-    const closeSettings = document.getElementById("closeSettings");
-
-    // Sistema de temas
-    const themeOptions = document.querySelectorAll('.theme-option');
-    const savedTheme = localStorage.getItem('streampro-theme') || 'default';
-    
-    document.body.className = savedTheme;
-    themeOptions.forEach(opt => {
-      if (opt.dataset.theme === savedTheme) {
-        opt.classList.add('active');
+    const CONFIG = {
+      signalingUrl: "wss://cucaracha-server.onrender.com",
+      iceServers: [
+        { urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"] },
+        { urls: "stun:global.stun.twilio.com:3478" },
+        {
+          urls: ["turn:openrelay.metered.ca:80", "turn:openrelay.metered.ca:443"],
+          username: "openrelayproject",
+          credential: "openrelayproject"
+        },
+        {
+          urls: ["turn:a.relay.metered.ca:80", "turn:a.relay.metered.ca:443"],
+          username: "87c4a8b8e928d97b360eec55",
+          credential: "F/WHZFGjGKurYCOM"
+        }
+      ],
+      resolutions: {
+        '480p': { width: 854, height: 480 },
+        '720p': { width: 1280, height: 720 },
+        '1080p': { width: 1920, height: 1080 },
+        '1440p': { width: 2560, height: 1440 }
       }
+    };
+
+    const state = {
+      ws: null,
+      pc: null,
+      stream: null,
+      roomId: null,
+      startTime: null,
+      durationInterval: null,
+      iceCandidateQueue: []
+    };
+
+    const elements = {
+      startBtn: document.getElementById("startBtn"),
+      stopBtn: document.getElementById("stopBtn"),
+      changeSourceBtn: document.getElementById("changeSourceBtn"),
+      statusEl: document.getElementById("status"),
+      videoEl: document.getElementById("localVideo"),
+      streamControls: document.getElementById("streamControls"),
+      streamStatus: document.getElementById('streamStatus'),
+      qualityDisplay: document.getElementById('qualityDisplay'),
+      duration: document.getElementById('duration')
+    };
+
+    // Sistema de temas optimizado
+    const themeManager = {
+      init() {
+        const saved = localStorage.getItem('streampro-theme') || 'default';
+        document.body.className = saved;
+        
+        document.querySelectorAll('.theme-option').forEach(opt => {
+          if (opt.dataset.theme === saved) opt.classList.add('active');
+          opt.onclick = () => this.setTheme(opt.dataset.theme);
+        });
+      },
+      setTheme(theme) {
+        document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+        event.target.closest('.theme-option').classList.add('active');
+        document.body.className = theme;
+        localStorage.setItem('streampro-theme', theme);
+      }
+    };
+
+    // Configuración de paneles
+    const settingsManager = {
+      panel: document.getElementById('settingsPanel'),
+      overlay: document.getElementById('settingsOverlay'),
       
-      opt.addEventListener('click', () => {
-        themeOptions.forEach(o => o.classList.remove('active'));
-        opt.classList.add('active');
-        document.body.className = opt.dataset.theme;
-        localStorage.setItem('streampro-theme', opt.dataset.theme);
-      });
-    });
+      toggle(show) {
+        this.panel.classList.toggle('active', show);
+        this.overlay.classList.toggle('active', show);
+      }
+    };
 
-    function openSettings() {
-      settingsPanel.classList.add('active');
-      settingsOverlay.classList.add('active');
+    document.getElementById('settingsBtn').onclick = () => settingsManager.toggle(true);
+    document.getElementById('closeSettings').onclick = () => settingsManager.toggle(false);
+    document.getElementById('settingsOverlay').onclick = () => settingsManager.toggle(false);
+
+    // Utilidades
+    const utils = {
+      updateDuration() {
+        if (!state.startTime) return;
+        const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+        const mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
+        const secs = (elapsed % 60).toString().padStart(2, '0');
+        elements.duration.textContent = `${mins}:${secs}`;
+      },
+      
+      updateStatus(msg, streamStatus = null) {
+        elements.statusEl.textContent = msg;
+        if (streamStatus) elements.streamStatus.textContent = streamStatus;
+      },
+      
+      getConstraints(fps, resolution) {
+        const constraints = {
+          video: { frameRate: { ideal: fps, max: fps }, cursor: "always" },
+          audio: document.getElementById("systemAudio").checked
+        };
+        
+        if (resolution !== 'default' && CONFIG.resolutions[resolution]) {
+          Object.assign(constraints.video, {
+            width: { ideal: CONFIG.resolutions[resolution].width },
+            height: { ideal: CONFIG.resolutions[resolution].height }
+          });
+        }
+        
+        return constraints;
+      },
+      
+      resetUI() {
+        elements.startBtn.style.display = "block";
+        elements.streamControls.style.display = "none";
+        state.startTime = null;
+      }
+    };
+
+    // Manejo de WebRTC
+    const rtcManager = {
+      async createPeerConnection(roomId) {
+        state.pc = new RTCPeerConnection({
+          iceServers: CONFIG.iceServers,
+          iceCandidatePoolSize: 10,
+          bundlePolicy: 'max-bundle',
+          rtcpMuxPolicy: 'require'
+        });
+
+        state.stream.getTracks().forEach(track => state.pc.addTrack(track, state.stream));
+
+        state.pc.onicecandidate = (e) => {
+          if (e.candidate) {
+            console.log("📤 Enviando candidato ICE:", e.candidate.type);
+            state.ws.send(JSON.stringify({
+              type: "ice-candidate",
+              candidate: e.candidate,
+              room: roomId
+            }));
+          }
+        };
+
+        state.pc.oniceconnectionstatechange = () => {
+          console.log("🔗 Estado ICE:", state.pc.iceConnectionState);
+          if (state.pc.iceConnectionState === 'connected') {
+            utils.updateStatus("✅ Conexión establecida - Transmitiendo", "Conectado");
+          } else if (state.pc.iceConnectionState === 'failed') {
+            state.pc.restartIce();
+          }
+        };
+
+        const offer = await state.pc.createOffer();
+        await state.pc.setLocalDescription(offer);
+        state.ws.send(JSON.stringify({ type: "offer", offer, room: roomId }));
+      },
+
+      async startStreaming(roomId, fps, resolution) {
+        const constraints = utils.getConstraints(fps, resolution);
+
+        try {
+          state.stream = await navigator.mediaDevices.getDisplayMedia(constraints);
+          elements.videoEl.srcObject = state.stream;
+
+          const track = state.stream.getVideoTracks()[0];
+          const settings = track.getSettings();
+          const hasAudio = state.stream.getAudioTracks().length > 0;
+          
+          elements.qualityDisplay.textContent = 
+            `${settings.width}x${settings.height}@${settings.frameRate}fps${hasAudio ? ' 🔊' : ' 🔇'}`;
+
+          await this.createPeerConnection(roomId);
+
+          state.stream.getVideoTracks()[0].onended = () => elements.stopBtn.click();
+
+        } catch (err) {
+          console.error("Error iniciando streaming:", err);
+          utils.updateStatus("❌ Error al compartir pantalla", "Error");
+          alert("⚠️ No se pudo iniciar la transmisión. Verifica los permisos.");
+          utils.resetUI();
+        }
+      },
+
+      async handleAnswer(answer) {
+        await state.pc.setRemoteDescription(new RTCSessionDescription(answer));
+        console.log(`📦 Procesando ${state.iceCandidateQueue.length} candidatos ICE en cola`);
+        
+        while (state.iceCandidateQueue.length > 0) {
+          const candidate = state.iceCandidateQueue.shift();
+          try {
+            await state.pc.addIceCandidate(new RTCIceCandidate(candidate));
+          } catch (error) {
+            console.error("❌ Error al procesar candidato:", error);
+          }
+        }
+        
+        utils.updateStatus("🎥 Transmitiendo en vivo", "En vivo");
+        elements.startBtn.style.display = "none";
+        elements.streamControls.style.display = "flex";
+        
+        state.startTime = Date.now();
+        state.durationInterval = setInterval(utils.updateDuration, 1000);
+      },
+
+      handleIceCandidate(candidate) {
+        if (!state.pc.remoteDescription) {
+          console.log("⏳ Candidato ICE en cola");
+          state.iceCandidateQueue.push(candidate);
+        } else {
+          state.pc.addIceCandidate(new RTCIceCandidate(candidate))
+            .then(() => console.log("✅ Candidato ICE agregado"))
+            .catch(err => console.error("❌ Error al agregar candidato:", err));
+        }
+      }
+    };
+
+    // WebSocket
+    function connectWebSocket(roomId, password, fps, resolution) {
+      state.roomId = roomId;
+      utils.updateStatus("🔌 Conectando con el servidor...", "Conectando");
+      state.ws = new WebSocket(CONFIG.signalingUrl);
+
+      state.ws.onopen = () => {
+        console.log("✅ Conectado al servidor");
+        state.ws.send(JSON.stringify({ type: "create", room: roomId, password }));
+        utils.updateStatus("📡 Esperando espectador...", "Esperando");
+      };
+
+      state.ws.onmessage = async (e) => {
+        const data = JSON.parse(e.data);
+        console.log("📨 Mensaje recibido:", data.type);
+
+        switch(data.type) {
+          case "ready":
+            state.iceCandidateQueue.length = 0;
+            await rtcManager.startStreaming(roomId, fps, resolution);
+            break;
+          case "answer":
+            await rtcManager.handleAnswer(data.answer);
+            break;
+          case "ice-candidate":
+            if (data.candidate) rtcManager.handleIceCandidate(data.candidate);
+            break;
+          case "error":
+            alert("⚠️ " + data.message);
+            utils.updateStatus("❌ " + data.message);
+            break;
+        }
+      };
+
+      state.ws.onclose = () => {
+        utils.updateStatus("❌ Desconectado del servidor", "Desconectado");
+        utils.resetUI();
+      };
     }
 
-    function closeSettingsPanel() {
-      settingsPanel.classList.remove('active');
-      settingsOverlay.classList.remove('active');
-    }
-
-    settingsBtn.onclick = openSettings;
-    closeSettings.onclick = closeSettingsPanel;
-    settingsOverlay.onclick = closeSettingsPanel;
-
-    function updateDuration() {
-      if (!startTime) return;
-      const elapsed = Math.floor((Date.now() - startTime) / 1000);
-      const mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
-      const secs = (elapsed % 60).toString().padStart(2, '0');
-      document.getElementById('duration').textContent = `${mins}:${secs}`;
-    }
-
-    startBtn.onclick = async () => {
+    // Event Listeners
+    elements.startBtn.onclick = () => {
       const roomId = document.getElementById("roomId").value.trim();
       const password = document.getElementById("password").value.trim();
       const resolution = document.getElementById("resolution").value;
@@ -633,310 +658,59 @@
         return;
       }
 
-      currentRoomId = roomId;
-      statusEl.textContent = "🔌 Conectando con el servidor...";
-      document.getElementById('streamStatus').textContent = "Conectando";
-      ws = new WebSocket(signalingUrl);
-
-      ws.onopen = async () => {
-        console.log("✅ Conectado al servidor de señalización (emisor)");
-        ws.send(JSON.stringify({ type: "create", room: roomId, password }));
-        statusEl.textContent = "📡 Esperando que se conecte el espectador...";
-        document.getElementById('streamStatus').textContent = "Esperando";
-      };
-
-      ws.onmessage = async (event) => {
-        const data = JSON.parse(event.data);
-        console.log("📨 Mensaje recibido:", data.type);
-
-        if (data.type === "ready") {
-          console.log("👀 El espectador está listo, enviando oferta...");
-          // 🔥 Limpiar cola al iniciar nueva conexión
-          iceCandidateQueue.length = 0;
-          await startStreaming(roomId, fps, resolution);
-          
-        } else if (data.type === "answer") {
-          console.log("📥 Respuesta recibida del viewer");
-          try {
-            await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
-            console.log("✅ Respuesta establecida correctamente");
-            
-            // 🔥 Procesar candidatos ICE en cola
-            console.log(`📦 Procesando ${iceCandidateQueue.length} candidatos ICE en cola`);
-            while (iceCandidateQueue.length > 0) {
-              const candidate = iceCandidateQueue.shift();
-              try {
-                await pc.addIceCandidate(new RTCIceCandidate(candidate));
-                console.log("✅ Candidato ICE en cola procesado");
-              } catch (error) {
-                console.error("❌ Error al procesar candidato en cola:", error);
-              }
-            }
-            
-            statusEl.textContent = "🎥 Transmitiendo en vivo";
-            document.getElementById('streamStatus').textContent = "En vivo";
-            startBtn.style.display = "none";
-            streamControls.style.display = "flex";
-            
-            startTime = Date.now();
-            durationInterval = setInterval(updateDuration, 1000);
-          } catch (err) {
-            console.error("❌ Error al establecer respuesta:", err);
-            statusEl.textContent = "❌ Error en la negociación";
-          }
-          
-        } else if (data.type === "ice-candidate") {
-          if (data.candidate) {
-            // 🔥 Si no hay descripción remota, guardar en cola
-            if (!pc.remoteDescription) {
-              console.log("⏳ Candidato ICE en cola (esperando answer)");
-              iceCandidateQueue.push(data.candidate);
-            } else {
-              try {
-                await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-                console.log("✅ Candidato ICE agregado:", data.candidate.type);
-              } catch (err) {
-                console.error("❌ Error al agregar candidato ICE:", err);
-              }
-            }
-          }
-        } else if (data.type === "error") {
-          alert("⚠️ " + data.message);
-          statusEl.textContent = "❌ " + data.message;
-        }
-      };
-
-      ws.onclose = () => {
-        statusEl.textContent = "❌ Desconectado del servidor";
-        document.getElementById('streamStatus').textContent = "Desconectado";
-        resetUI();
-      };
+      connectWebSocket(roomId, password, fps, resolution);
     };
 
-    changeSourceBtn.onclick = async () => {
-      if (!pc || !stream) return;
+    elements.changeSourceBtn.onclick = async () => {
+      if (!state.pc || !state.stream) return;
 
       const resolution = document.getElementById("resolution").value;
       const fps = parseInt(document.getElementById("fps").value);
-
-      statusEl.textContent = "🔄 Cambiando fuente...";
+      utils.updateStatus("🔄 Cambiando fuente...");
 
       try {
-        stream.getTracks().forEach(track => track.stop());
-
-        const constraints = getConstraints(fps, resolution);
-        const newStream = await navigator.mediaDevices.getDisplayMedia(constraints);
+        state.stream.getTracks().forEach(track => track.stop());
+        const newStream = await navigator.mediaDevices.getDisplayMedia(utils.getConstraints(fps, resolution));
         
-        videoEl.srcObject = newStream;
-        stream = newStream;
+        elements.videoEl.srcObject = newStream;
+        state.stream = newStream;
 
+        const senders = state.pc.getSenders();
         const videoTrack = newStream.getVideoTracks()[0];
         const audioTrack = newStream.getAudioTracks()[0];
 
-        const senders = pc.getSenders();
-        
-        const videoSender = senders.find(s => s.track && s.track.kind === 'video');
-        if (videoSender) {
-          await videoSender.replaceTrack(videoTrack);
-        }
+        const videoSender = senders.find(s => s.track?.kind === 'video');
+        if (videoSender) await videoSender.replaceTrack(videoTrack);
 
         if (audioTrack) {
-          const audioSender = senders.find(s => s.track && s.track.kind === 'audio');
-          if (audioSender) {
-            await audioSender.replaceTrack(audioTrack);
-          } else {
-            pc.addTrack(audioTrack, stream);
-          }
+          const audioSender = senders.find(s => s.track?.kind === 'audio');
+          audioSender ? await audioSender.replaceTrack(audioTrack) : state.pc.addTrack(audioTrack, state.stream);
         }
 
-        statusEl.textContent = "✅ Fuente cambiada - Transmitiendo";
-        console.log("✅ Fuente de video cambiada exitosamente");
-
-        stream.getVideoTracks()[0].onended = () => {
-          console.log("📺 Usuario detuvo compartir pantalla");
-          stopBtn.click();
-        };
-
+        utils.updateStatus("✅ Fuente cambiada - Transmitiendo");
+        newStream.getVideoTracks()[0].onended = () => elements.stopBtn.click();
       } catch (err) {
         console.error("Error al cambiar fuente:", err);
-        statusEl.textContent = "❌ Error al cambiar fuente";
-        alert("No se pudo cambiar la fuente. Intenta de nuevo.");
+        alert("No se pudo cambiar la fuente.");
       }
     };
 
-    stopBtn.onclick = () => {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-      }
-      if (pc) {
-        pc.close();
-      }
-      if (ws) {
-        ws.close();
-      }
-      if (durationInterval) {
-        clearInterval(durationInterval);
-      }
-      videoEl.srcObject = null;
-      // 🔥 Limpiar cola al detener
-      iceCandidateQueue.length = 0;
-      resetUI();
-      statusEl.textContent = "⏹️ Transmisión detenida";
-      document.getElementById('streamStatus').textContent = "Detenido";
-      document.getElementById('duration').textContent = "00:00";
-      document.getElementById('qualityDisplay').textContent = "--";
-    };
-
-    function getConstraints(fps, resolution) {
-      const systemAudio = document.getElementById("systemAudio").checked;
+    elements.stopBtn.onclick = () => {
+      if (state.stream) state.stream.getTracks().forEach(track => track.stop());
+      if (state.pc) state.pc.close();
+      if (state.ws) state.ws.close();
+      if (state.durationInterval) clearInterval(state.durationInterval);
       
-      const constraints = {
-        video: { 
-          frameRate: { ideal: fps, max: fps },
-          cursor: "always"
-        },
-        audio: systemAudio
-      };
+      elements.videoEl.srcObject = null;
+      state.iceCandidateQueue.length = 0;
+      utils.resetUI();
+      utils.updateStatus("⏹️ Transmisión detenida", "Detenido");
+      elements.qualityDisplay.textContent = "--";
+      elements.duration.textContent = "00:00";
+    };
 
-      const resolutions = {
-        '480p': { width: 854, height: 480 },
-        '540p': { width: 960, height: 540 },
-        '720p': { width: 1280, height: 720 },
-        '900p': { width: 1600, height: 900 },
-        '1080p': { width: 1920, height: 1080 },
-        '1440p': { width: 2560, height: 1440 },
-        '2160p': { width: 3840, height: 2160 }
-      };
-
-      if (resolution !== 'default' && resolutions[resolution]) {
-        constraints.video.width = { ideal: resolutions[resolution].width };
-        constraints.video.height = { ideal: resolutions[resolution].height };
-      }
-
-      return constraints;
-    }
-
-    async function startStreaming(roomId, fps, resolution) {
-      const constraints = getConstraints(fps, resolution);
-
-      try {
-        stream = await navigator.mediaDevices.getDisplayMedia(constraints);
-        videoEl.srcObject = stream;
-
-        const track = stream.getVideoTracks()[0];
-        const settings = track.getSettings();
-        const audioTracks = stream.getAudioTracks();
-        const audioStatus = audioTracks.length > 0 ? " 🔊" : " 🔇";
-        
-        document.getElementById('qualityDisplay').textContent = 
-          `${settings.width}x${settings.height}@${settings.frameRate}fps${audioStatus}`;
-
-        pc = new RTCPeerConnection({
-          iceServers: [
-            { urls: "stun:stun.l.google.com:19302" },
-            { urls: "stun:stun1.l.google.com:19302" },
-            { urls: "stun:stun2.l.google.com:19302" },
-            { urls: "stun:stun3.l.google.com:19302" },
-            { urls: "stun:stun4.l.google.com:19302" },
-            { urls: "stun:global.stun.twilio.com:3478" },
-            {
-              urls: [
-                "turn:openrelay.metered.ca:80",
-                "turn:openrelay.metered.ca:80?transport=tcp",
-                "turn:openrelay.metered.ca:443",
-                "turn:openrelay.metered.ca:443?transport=tcp"
-              ],
-              username: "openrelayproject",
-              credential: "openrelayproject"
-            },
-            {
-              urls: [
-                "turn:a.relay.metered.ca:80",
-                "turn:a.relay.metered.ca:80?transport=tcp",
-                "turn:a.relay.metered.ca:443",
-                "turn:a.relay.metered.ca:443?transport=tcp"
-              ],
-              username: "87c4a8b8e928d97b360eec55",
-              credential: "F/WHZFGjGKurYCOM"
-            },
-            {
-              urls: [
-                "turn:numb.viagenie.ca",
-                "turn:numb.viagenie.ca:3478?transport=tcp"
-              ],
-              username: "webrtc@live.com",
-              credential: "muazkh"
-            }
-          ],
-          iceCandidatePoolSize: 10,
-          bundlePolicy: 'max-bundle',
-          rtcpMuxPolicy: 'require',
-          iceTransportPolicy: 'all'
-        });
-
-        stream.getTracks().forEach((track) => {
-          pc.addTrack(track, stream);
-        });
-
-        stream.getVideoTracks()[0].onended = () => {
-          console.log("📺 Usuario detuvo compartir pantalla");
-          stopBtn.click();
-        };
-
-        pc.onicecandidate = (event) => {
-          if (event.candidate) {
-            console.log("📤 Enviando candidato ICE:", event.candidate.type);
-            ws.send(JSON.stringify({
-              type: "ice-candidate",
-              candidate: event.candidate,
-              room: roomId
-            }));
-          } else {
-            console.log("✅ Todos los candidatos ICE recopilados");
-          }
-        };
-
-        pc.oniceconnectionstatechange = () => {
-          console.log("🔗 Estado ICE:", pc.iceConnectionState);
-          if (pc.iceConnectionState === 'connected' || pc.iceConnectionState === 'completed') {
-            console.log("✅ Conexión ICE establecida exitosamente");
-            statusEl.textContent = "✅ Conexión establecida - Transmitiendo";
-            document.getElementById('streamStatus').textContent = "Conectado";
-          } else if (pc.iceConnectionState === 'failed') {
-            console.error("❌ Conexión ICE falló, intentando reiniciar...");
-            pc.restartIce();
-          } else if (pc.iceConnectionState === 'disconnected') {
-            console.warn("⚠️ Conexión ICE desconectada temporalmente");
-            statusEl.textContent = "⚠️ Reconectando...";
-          }
-        };
-
-        const offer = await pc.createOffer();
-        await pc.setLocalDescription(offer);
-
-        ws.send(JSON.stringify({ type: "offer", offer, room: roomId }));
-      } catch (err) {
-        console.error("Error iniciando streaming:", err);
-        statusEl.textContent = "❌ Error al compartir pantalla";
-        document.getElementById('streamStatus').textContent = "Error";
-        
-        if (err.name === 'NotAllowedError') {
-          alert("⚠️ Permisos denegados. Por favor, permite compartir pantalla y audio.");
-        } else if (err.name === 'NotFoundError') {
-          alert("⚠️ No se encontró ninguna pantalla para compartir.");
-        } else {
-          alert("⚠️ No se pudo iniciar la transmisión. Asegúrate de dar permisos y seleccionar 'Compartir audio' en la ventana.");
-        }
-        
-        resetUI();
-      }
-    }
-
-    function resetUI() {
-      startBtn.style.display = "block";
-      streamControls.style.display = "none";
-      startTime = null;
-    }
+    // Inicializar
+    themeManager.init();
   </script>
 </body>
 </html>

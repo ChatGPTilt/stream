@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AngelitaTV - Viewer</title>
+  <link rel="icon" href="data:,">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
@@ -570,12 +571,14 @@
 
         state.pc.onicecandidate = (e) => {
           if (e.candidate) {
-            console.log("📤 Enviando candidato ICE:", e.candidate.type);
+            console.log("📤 Enviando candidato ICE al emisor:", e.candidate.type);
             state.ws.send(JSON.stringify({
               type: "ice-candidate",
               candidate: e.candidate,
               room: state.roomId
             }));
+          } else {
+            console.log("✅ Todos los candidatos ICE enviados");
           }
         };
 
@@ -636,6 +639,7 @@
         utils.updateConnectionStatus('checking', '🔄 Conectando...');
         
         try {
+          console.log("⏳ Estableciendo descripción remota...");
           await state.pc.setRemoteDescription(new RTCSessionDescription(offer));
           console.log("✅ Descripción remota establecida");
           
@@ -645,19 +649,26 @@
             const candidate = state.iceCandidateQueue.shift();
             try {
               await state.pc.addIceCandidate(new RTCIceCandidate(candidate));
+              console.log("✅ Candidato ICE en cola procesado:", candidate.type);
             } catch (error) {
               console.error("❌ Error al procesar candidato:", error);
             }
           }
           
+          console.log("⏳ Creando respuesta (answer)...");
           const answer = await state.pc.createAnswer();
-          await state.pc.setLocalDescription(answer);
+          console.log("✅ Answer creado");
           
+          await state.pc.setLocalDescription(answer);
+          console.log("✅ Descripción local establecida");
+          
+          console.log("📤 Enviando answer al emisor...");
           state.ws.send(JSON.stringify({ 
             type: "answer", 
             answer, 
             room: state.roomId 
           }));
+          console.log("✅ Answer enviado exitosamente");
           
           utils.updateStatus("⏳ Esperando stream de video...", "Esperando...");
           
@@ -671,12 +682,12 @@
 
       handleIceCandidate(candidate) {
         if (!state.pc.remoteDescription) {
-          console.log("⏳ Candidato ICE en cola");
+          console.log("⏳ Candidato ICE en cola (esperando offer)");
           state.iceCandidateQueue.push(candidate);
         } else {
           state.pc.addIceCandidate(new RTCIceCandidate(candidate))
-            .then(() => console.log("✅ Candidato ICE agregado"))
-            .catch(err => console.error("❌ Error:", err));
+            .then(() => console.log("✅ Candidato ICE agregado:", candidate.type))
+            .catch(err => console.error("❌ Error al agregar candidato:", err));
         }
       }
     };
@@ -700,10 +711,14 @@
 
         switch(data.type) {
           case "offer":
+            console.log("📥 Oferta recibida del emisor");
             await rtcManager.handleOffer(data.offer);
             break;
           case "ice-candidate":
-            if (data.candidate) rtcManager.handleIceCandidate(data.candidate);
+            if (data.candidate) {
+              console.log("📨 Candidato ICE recibido:", data.candidate.type);
+              rtcManager.handleIceCandidate(data.candidate);
+            }
             break;
           case "error":
             utils.updateStatus("❌ " + data.message, "Error");

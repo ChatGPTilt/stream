@@ -588,7 +588,7 @@
             const candidate = state.iceCandidateQueue.shift();
             try {
               await state.pc.addIceCandidate(new RTCIceCandidate(candidate));
-              console.log("✅ Candidato ICE en cola procesado:", candidate.type);
+              console.log("✅ Candidato ICE en cola procesado");
             } catch (error) {
               console.error("❌ Error al procesar candidato en cola:", error);
             }
@@ -646,7 +646,7 @@
             break;
           case "ice-candidate":
             if (data.candidate) {
-              console.log("📨 Candidato ICE recibido:", data.candidate.type);
+              console.log("📨 Candidato ICE recibido del viewer");
               rtcManager.handleIceCandidate(data.candidate);
             }
             break;

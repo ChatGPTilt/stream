@@ -649,7 +649,7 @@
             const candidate = state.iceCandidateQueue.shift();
             try {
               await state.pc.addIceCandidate(new RTCIceCandidate(candidate));
-              console.log("✅ Candidato ICE en cola procesado:", candidate.type);
+              console.log("✅ Candidato ICE en cola procesado");
             } catch (error) {
               console.error("❌ Error al procesar candidato:", error);
             }
@@ -686,7 +686,7 @@
           state.iceCandidateQueue.push(candidate);
         } else {
           state.pc.addIceCandidate(new RTCIceCandidate(candidate))
-            .then(() => console.log("✅ Candidato ICE agregado:", candidate.type))
+            .then(() => console.log("✅ Candidato ICE agregado del emisor"))
             .catch(err => console.error("❌ Error al agregar candidato:", err));
         }
       }
@@ -716,7 +716,7 @@
             break;
           case "ice-candidate":
             if (data.candidate) {
-              console.log("📨 Candidato ICE recibido:", data.candidate.type);
+              console.log("📨 Candidato ICE recibido del emisor");
               rtcManager.handleIceCandidate(data.candidate);
             }
             break;

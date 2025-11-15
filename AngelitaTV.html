@@ -417,6 +417,10 @@
   <div class="video-container" id="videoContainer">
     <video id="remoteVideo" autoplay playsinline></video>
     
+    <div class="play-overlay" id="playOverlay">
+      <div class="play-button">▶</div>
+    </div>
+    
     <div class="connection-status" id="connectionStatus">
       <span id="connectionText">Conectando...</span>
     </div>
@@ -485,7 +489,8 @@
       connectionStatus: document.getElementById("connectionStatus"),
       connectionText: document.getElementById("connectionText"),
       volumeSlider: document.getElementById("volumeSlider"),
-      volumeIcon: document.getElementById("volumeIcon")
+      volumeIcon: document.getElementById("volumeIcon"),
+      playOverlay: document.getElementById("playOverlay")
     };
 
     // Gestión de temas
@@ -591,12 +596,16 @@
     // WebRTC
     const rtcManager = {
       init() {
+        console.log("🔧 Inicializando RTCPeerConnection...");
+        
         state.pc = new RTCPeerConnection({
           iceServers: CONFIG.iceServers,
           iceCandidatePoolSize: 10,
           bundlePolicy: 'max-bundle',
           rtcpMuxPolicy: 'require'
         });
+
+        console.log("✅ RTCPeerConnection creado");
 
         state.pc.onicecandidate = (e) => {
           if (e.candidate) {
@@ -612,48 +621,61 @@
         };
 
         state.pc.ontrack = (e) => {
-          console.log("🎥 ¡Stream recibido! Configurando video...");
+          console.log("🎥 ========== ONTRACK DISPARADO ==========");
+          
+          // Limpiar timeout
+          if (state.playTimeout) {
+            clearTimeout(state.playTimeout);
+            state.playTimeout = null;
+          }
+          
           console.log("Streams disponibles:", e.streams.length);
-          console.log("Tracks en el stream:", e.streams[0].getTracks().length);
           
-          elements.video.srcObject = e.streams[0];
-          elements.container.classList.add("active");
-          elements.connectionStatus.classList.add("active");
+          if (!e.streams || e.streams.length === 0) {
+            console.error("❌ No hay streams en el evento ontrack!");
+            return;
+          }
           
-          const audioTracks = e.streams[0].getAudioTracks();
-          const videoTracks = e.streams[0].getVideoTracks();
+          const stream = e.streams[0];
+          console.log("Tracks totales:", stream.getTracks().length);
+          console.log("Video tracks:", stream.getVideoTracks().length);
+          console.log("Audio tracks:", stream.getAudioTracks().length);
           
-          console.log(`📹 Video tracks: ${videoTracks.length}`);
-          console.log(`🔊 Audio tracks: ${audioTracks.length}`);
+          stream.getTracks().forEach((track, index) => {
+            console.log(`Track ${index}: ${track.kind} - ${track.label} - enabled: ${track.enabled} - readyState: ${track.readyState}`);
+          });
           
-          if (videoTracks.length === 0) {
+          if (stream.getVideoTracks().length === 0) {
             console.error("❌ No hay pistas de video en el stream!");
             utils.updateStatus("❌ No hay video en la transmisión");
             return;
           }
           
-          // Verificar si el video se está reproduciendo
-          state.playTimeout = setTimeout(() => {
-            if (elements.video.paused || elements.video.readyState < 2) {
-              console.warn("⚠️ Video no se está reproduciendo automáticamente. Intentando forzar...");
-              elements.video.play().catch(err => {
-                console.error("❌ No se pudo reproducir:", err);
-                utils.updateStatus("⚠️ Haz clic en el video para reproducir", "Esperando");
-              });
-            }
-          }, 2000);
+          console.log("📺 Asignando stream al elemento video...");
+          elements.video.srcObject = stream;
+          
+          console.log("🎨 Mostrando contenedor de video...");
+          elements.container.classList.add("active");
+          elements.connectionStatus.classList.add("active");
+          
+          console.log("▶️ Intentando reproducir...");
           
           // Forzar reproducción del video
           elements.video.play().then(() => {
-            console.log("✅ Reproducción iniciada manualmente");
+            console.log("✅ Reproducción iniciada automáticamente");
             utils.updateStatus("✅ Reproduciendo transmisión en vivo", "En vivo");
             utils.updateConnectionStatus('connected', '✅ En vivo');
+            elements.playOverlay.classList.remove('active');
           }).catch(err => {
-            console.error("❌ Error al iniciar reproducción:", err);
-            utils.updateStatus("⚠️ Haz clic en el video para reproducir", "Pausado");
+            console.error("⚠️ Autoplay bloqueado:", err.name, err.message);
+            console.log("💡 Mostrando botón de reproducción manual");
+            utils.updateStatus("⚠️ Haz clic en el botón ▶ para reproducir", "Pausado");
+            elements.playOverlay.classList.add('active');
           });
           
+          console.log("📊 Iniciando monitoreo de estadísticas...");
           statsManager.start();
+          console.log("🎥 ========== ONTRACK COMPLETADO ==========");
         };
 
         state.pc.onconnectionstatechange = () => {
@@ -730,6 +752,25 @@
           console.log("✅ Answer enviado exitosamente");
           
           utils.updateStatus("⏳ Esperando stream de video...", "Esperando...");
+          
+          // Timeout para detectar si ontrack nunca se dispara
+          state.playTimeout = setTimeout(() => {
+            if (!elements.video.srcObject) {
+              console.error("❌ TIMEOUT: ontrack nunca se disparó después de 10 segundos");
+              console.log("📊 Estado de la conexión:", state.pc.connectionState);
+              console.log("📊 Estado ICE:", state.pc.iceConnectionState);
+              console.log("📊 Signaling state:", state.pc.signalingState);
+              
+              const receivers = state.pc.getReceivers();
+              console.log("📊 Receivers:", receivers.length);
+              receivers.forEach((receiver, index) => {
+                console.log(`  Receiver ${index}:`, receiver.track ? receiver.track.kind : 'no track');
+              });
+              
+              utils.updateStatus("❌ No se recibió el stream. Intenta reconectar.", "Error");
+              utils.updateConnectionStatus('failed', '❌ Sin stream');
+            }
+          }, 10000);
           
         } catch (err) {
           console.error("❌ Error al procesar oferta:", err);
@@ -936,6 +977,20 @@
       state.reconnectAttempts = 0;
       state.iceCandidateQueue.length = 0;
       connectWebSocket(roomId, password);
+    };
+
+    // Botón de reproducción manual
+    elements.playOverlay.onclick = () => {
+      console.log("👆 Usuario hizo clic en botón de reproducción");
+      elements.video.play().then(() => {
+        console.log("✅ Reproducción iniciada por el usuario");
+        elements.playOverlay.classList.remove('active');
+        utils.updateStatus("✅ Reproduciendo transmisión en vivo", "En vivo");
+        utils.updateConnectionStatus('connected', '✅ En vivo');
+      }).catch(err => {
+        console.error("❌ Error al reproducir:", err);
+        alert("No se pudo reproducir el video. Intenta recargar la página.");
+      });
     };
 
     // Inicializar

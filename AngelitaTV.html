@@ -672,8 +672,14 @@
           
           // Esperar un momento para que el video cargue
           setTimeout(() => {
+            console.log("🎬 Intentando reproducir video...");
+            console.log("Video paused:", elements.video.paused);
+            console.log("Video readyState:", elements.video.readyState);
+            console.log("Video networkState:", elements.video.networkState);
+            
             elements.video.play().then(() => {
               console.log("✅ Reproducción iniciada automáticamente");
+              console.log("Video paused after play:", elements.video.paused);
               utils.updateStatus("✅ Reproduciendo transmisión en vivo", "En vivo");
               utils.updateConnectionStatus('connected', '✅ En vivo');
               elements.playOverlay.classList.remove('active');
@@ -873,44 +879,84 @@
         document.addEventListener("keydown", (e) => this.handleKeyboard(e));
         
         // Eventos de video
+        elements.video.addEventListener('loadstart', () => {
+          console.log("🔄 loadstart - Comenzando a cargar");
+        });
+
         elements.video.addEventListener('loadedmetadata', () => {
-          console.log(`✅ Metadatos cargados: ${elements.video.videoWidth}x${elements.video.videoHeight}`);
+          console.log(`✅ loadedmetadata - ${elements.video.videoWidth}x${elements.video.videoHeight}`);
+          console.log("Duration:", elements.video.duration);
           utils.updateStatus("✅ Video cargado - Reproduciendo...", "Buffering...");
           utils.updateConnectionStatus('connected', '✅ Cargando');
         });
 
         elements.video.addEventListener('loadeddata', () => {
-          console.log("📊 Datos del video listos");
+          console.log("📊 loadeddata - Primer frame cargado");
+          console.log("readyState:", elements.video.readyState);
         });
 
         elements.video.addEventListener('canplay', () => {
-          console.log("▶️ Video listo para reproducir");
+          console.log("▶️ canplay - Video listo para reproducir");
+          console.log("paused:", elements.video.paused);
           utils.updateStatus("✅ Listo para reproducir", "Listo");
         });
 
+        elements.video.addEventListener('canplaythrough', () => {
+          console.log("✅ canplaythrough - Video puede reproducirse sin interrupciones");
+        });
+
         elements.video.addEventListener('playing', () => {
-          console.log("✅ Video REPRODUCIENDO AHORA");
+          console.log("✅✅✅ playing - VIDEO REPRODUCIENDO AHORA ✅✅✅");
+          console.log("currentTime:", elements.video.currentTime);
+          console.log("paused:", elements.video.paused);
           utils.updateStatus("✅ Reproduciendo transmisión en vivo", "En vivo");
           utils.updateConnectionStatus('connected', '✅ En vivo');
+          elements.playOverlay.classList.remove('active');
+        });
+
+        elements.video.addEventListener('play', () => {
+          console.log("▶️ play - Evento play disparado");
+        });
+
+        elements.video.addEventListener('pause', () => {
+          console.log("⏸️ pause - Video pausado");
         });
 
         elements.video.addEventListener('waiting', () => {
-          console.log("⏳ Buffering...");
+          console.log("⏳ waiting - Buffering...");
           utils.updateStatus("⏳ Buffering...", "Buffering...");
         });
 
         elements.video.addEventListener('error', (e) => {
-          console.error("❌ Error en video:", elements.video.error);
+          console.error("❌ error:", elements.video.error);
+          console.error("Error code:", elements.video.error?.code);
+          console.error("Error message:", elements.video.error?.message);
           utils.updateStatus("❌ Error al reproducir video");
           utils.updateConnectionStatus('failed', '❌ Error video');
         });
 
         elements.video.addEventListener('stalled', () => {
-          console.warn("⚠️ Reproducción estancada");
+          console.warn("⚠️ stalled - Reproducción estancada");
         });
 
         elements.video.addEventListener('suspend', () => {
-          console.log("⏸️ Reproducción suspendida");
+          console.log("⏸️ suspend - Carga suspendida");
+        });
+
+        elements.video.addEventListener('abort', () => {
+          console.warn("🛑 abort - Carga abortada");
+        });
+
+        elements.video.addEventListener('emptied', () => {
+          console.warn("📭 emptied - Elemento vacío");
+        });
+
+        elements.video.addEventListener('timeupdate', () => {
+          // Solo log cada 2 segundos para no saturar
+          if (!elements.video._lastTimeLog || Date.now() - elements.video._lastTimeLog > 2000) {
+            console.log("⏱️ timeupdate - currentTime:", elements.video.currentTime.toFixed(2));
+            elements.video._lastTimeLog = Date.now();
+          }
         });
       },
 

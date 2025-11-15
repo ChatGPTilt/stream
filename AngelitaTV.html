@@ -5,11 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AngelitaTV - Viewer</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     
     :root {
       --primary: #667eea;
@@ -29,60 +25,16 @@
       transition: background 0.5s ease;
     }
 
-    body.purple {
-      --primary: #667eea;
-      --secondary: #764ba2;
-      --accent: #ff66cc;
-    }
-
-    body.pink {
-      --primary: #ec4899;
-      --secondary: #be185d;
-      --accent: #fda4af;
-    }
-
-    body.blue {
-      --primary: #3b82f6;
-      --secondary: #1e40af;
-      --accent: #93c5fd;
-    }
-
-    body.green {
-      --primary: #10b981;
-      --secondary: #047857;
-      --accent: #6ee7b7;
-    }
-
-    body.orange {
-      --primary: #f97316;
-      --secondary: #c2410c;
-      --accent: #fdba74;
-    }
-
-    body.cyan {
-      --primary: #06b6d4;
-      --secondary: #0e7490;
-      --accent: #67e8f9;
-    }
+    body.purple { --primary: #667eea; --secondary: #764ba2; --accent: #ff66cc; }
+    body.pink { --primary: #ec4899; --secondary: #be185d; --accent: #fda4af; }
+    body.blue { --primary: #3b82f6; --secondary: #1e40af; --accent: #93c5fd; }
+    body.green { --primary: #10b981; --secondary: #047857; --accent: #6ee7b7; }
+    body.orange { --primary: #f97316; --secondary: #c2410c; --accent: #fdba74; }
+    body.cyan { --primary: #06b6d4; --secondary: #0e7490; --accent: #67e8f9; }
     
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-      animation: fadeIn 0.8s ease-in;
-    }
-    
-    h1 {
-      font-size: 3em;
-      color: #ffffff;
-      margin-bottom: 5px;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    }
-    
-    .subtitle {
-      font-size: 1.1em;
-      color: #ffe4f1;
-      opacity: 0.9;
-    }
+    header { text-align: center; margin-bottom: 30px; animation: fadeIn 0.8s ease-in; }
+    h1 { font-size: 3em; color: #ffffff; margin-bottom: 5px; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); }
+    .subtitle { font-size: 1.1em; color: #ffe4f1; opacity: 0.9; }
 
     .settings-btn {
       position: fixed;
@@ -104,17 +56,11 @@
       justify-content: center;
     }
 
-    .settings-btn:hover {
-      transform: rotate(90deg) scale(1.1);
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
-    }
+    .settings-btn:hover { transform: rotate(90deg) scale(1.1); box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); }
 
     .settings-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
       background: rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(5px);
       z-index: 998;
@@ -123,10 +69,7 @@
       transition: opacity 0.3s ease;
     }
 
-    .settings-overlay.active {
-      display: block;
-      opacity: 1;
-    }
+    .settings-overlay.active { display: block; opacity: 1; }
 
     .settings-panel {
       position: fixed;
@@ -143,9 +86,7 @@
       overflow-y: auto;
     }
 
-    .settings-panel.active {
-      right: 0;
-    }
+    .settings-panel.active { right: 0; }
 
     .settings-header {
       display: flex;
@@ -156,11 +97,7 @@
       border-bottom: 2px solid rgba(255, 255, 255, 0.1);
     }
 
-    .settings-title {
-      font-size: 1.5em;
-      color: var(--accent);
-    }
-
+    .settings-title { font-size: 1.5em; color: var(--accent); }
     .close-settings {
       background: none;
       border: none;
@@ -173,16 +110,8 @@
       transition: transform 0.2s ease;
     }
 
-    .close-settings:hover {
-      transform: scale(1.2);
-    }
-
-    .theme-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-      margin-bottom: 30px;
-    }
+    .close-settings:hover { transform: scale(1.2); }
+    .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px; }
 
     .theme-option {
       padding: 15px;
@@ -193,22 +122,9 @@
       text-align: center;
     }
 
-    .theme-option:hover {
-      transform: translateY(-3px);
-      border-color: var(--accent);
-    }
-
-    .theme-option.active {
-      border-color: var(--accent);
-      background: rgba(255, 102, 204, 0.2);
-    }
-
-    .theme-preview {
-      width: 100%;
-      height: 40px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-    }
+    .theme-option:hover { transform: translateY(-3px); border-color: var(--accent); }
+    .theme-option.active { border-color: var(--accent); background: rgba(255, 102, 204, 0.2); }
+    .theme-preview { width: 100%; height: 40px; border-radius: 8px; margin-bottom: 8px; }
     
     #controls {
       background: rgba(255, 255, 255, 0.1);
@@ -222,17 +138,8 @@
       animation: slideUp 0.6s ease-out;
     }
     
-    .input-group {
-      margin-bottom: 20px;
-    }
-    
-    label {
-      display: block;
-      font-size: 0.9em;
-      color: #ffccee;
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
+    .input-group { margin-bottom: 20px; }
+    label { display: block; font-size: 0.9em; color: #ffccee; margin-bottom: 8px; font-weight: 500; }
     
     input {
       width: 100%;
@@ -245,10 +152,7 @@
       transition: all 0.3s ease;
     }
     
-    input::placeholder {
-      color: rgba(255, 255, 255, 0.6);
-    }
-    
+    input::placeholder { color: rgba(255, 255, 255, 0.6); }
     input:focus {
       outline: none;
       border-color: var(--accent);
@@ -270,20 +174,9 @@
       box-shadow: 0 4px 15px rgba(255, 102, 204, 0.4);
     }
     
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 102, 204, 0.6);
-    }
-    
-    button:active {
-      transform: translateY(0);
-    }
-    
-    button:disabled {
-      background: rgba(255, 255, 255, 0.2);
-      cursor: not-allowed;
-      transform: none;
-    }
+    button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 102, 204, 0.6); }
+    button:active { transform: translateY(0); }
+    button:disabled { background: rgba(255, 255, 255, 0.2); cursor: not-allowed; transform: none; }
     
     #status {
       margin-top: 20px;
@@ -308,16 +201,8 @@
       animation: fadeIn 0.5s ease-in;
     }
     
-    .video-container.active {
-      display: block;
-    }
-    
-    video {
-      width: 100%;
-      height: auto;
-      display: block;
-      background: #000;
-    }
+    .video-container.active { display: block; }
+    video { width: 100%; height: auto; display: block; background: #000; }
     
     .video-controls {
       background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7), transparent);
@@ -334,22 +219,9 @@
       z-index: 10;
     }
     
-    .video-container:hover .video-controls {
-      opacity: 1;
-    }
-    
-    .volume-control {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex: 1;
-    }
-    
-    .volume-icon {
-      font-size: 1.5em;
-      cursor: pointer;
-      user-select: none;
-    }
+    .video-container:hover .video-controls { opacity: 1; }
+    .volume-control { display: flex; align-items: center; gap: 10px; flex: 1; }
+    .volume-icon { font-size: 1.5em; cursor: pointer; user-select: none; }
     
     #volumeSlider {
       flex: 1;
@@ -401,9 +273,7 @@
       white-space: nowrap;
     }
     
-    .fullscreen-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
+    .fullscreen-btn:hover { background: rgba(255, 255, 255, 0.3); }
     
     .stats {
       display: none;
@@ -419,15 +289,8 @@
       z-index: 10;
     }
     
-    .stats.active {
-      display: block;
-    }
-    
-    .stats-title {
-      color: var(--accent);
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
+    .stats.active { display: block; }
+    .stats-title { color: var(--accent); font-weight: bold; margin-bottom: 8px; }
 
     .connection-status {
       position: absolute;
@@ -441,110 +304,27 @@
       z-index: 10;
     }
 
-    .connection-status.active {
-      display: block;
-    }
+    .connection-status.active { display: block; }
+    .connection-status.checking { border: 2px solid #fbbf24; color: #fbbf24; }
+    .connection-status.connected { border: 2px solid #10b981; color: #10b981; }
+    .connection-status.failed { border: 2px solid #ef4444; color: #ef4444; }
 
-    .connection-status.checking {
-      border: 2px solid #fbbf24;
-      color: #fbbf24;
-    }
-
-    .connection-status.connected {
-      border: 2px solid #10b981;
-      color: #10b981;
-    }
-
-    .connection-status.failed {
-      border: 2px solid #ef4444;
-      color: #ef4444;
-    }
-
-    /* Estilos para pantalla completa */
-    .video-container:-webkit-full-screen {
-      width: 100vw;
-      height: 100vh;
-      max-width: 100vw;
-      border-radius: 0;
-    }
-
-    .video-container:-moz-full-screen {
-      width: 100vw;
-      height: 100vh;
-      max-width: 100vw;
-      border-radius: 0;
-    }
-
-    .video-container:fullscreen {
-      width: 100vw;
-      height: 100vh;
-      max-width: 100vw;
-      border-radius: 0;
-    }
-
-    .video-container:-webkit-full-screen video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
-    .video-container:-moz-full-screen video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
-    .video-container:fullscreen video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
+    .video-container:fullscreen { width: 100vw; height: 100vh; max-width: 100vw; border-radius: 0; }
+    .video-container:fullscreen video { width: 100%; height: 100%; object-fit: contain; }
     
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-    
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     
     @media (max-width: 768px) {
-      h1 {
-        font-size: 2em;
-      }
-      
-      #controls {
-        padding: 20px;
-      }
-      
-      .video-controls {
-        flex-wrap: wrap;
-        padding: 15px;
-      }
-
-      .quality-indicator {
-        order: 3;
-        width: 100%;
-        text-align: center;
-      }
+      h1 { font-size: 2em; }
+      #controls { padding: 20px; }
+      .video-controls { flex-wrap: wrap; padding: 15px; }
+      .quality-indicator { order: 3; width: 100%; text-align: center; }
     }
   </style>
 </head>
 <body class="purple">
   <button class="settings-btn" id="settingsBtn">⚙️</button>
-
   <div class="settings-overlay" id="settingsOverlay"></div>
 
   <div class="settings-panel" id="settingsPanel">
@@ -638,500 +418,437 @@
   </div>
 
   <script>
-    const signalingUrl = "wss://cucaracha-server.onrender.com";
-    let ws, pc, currentRoom;
-    let statsInterval;
-    let reconnectAttempts = 0;
-    const MAX_RECONNECT_ATTEMPTS = 3;
-    
-    const videoEl = document.getElementById("remoteVideo");
-    const videoContainer = document.getElementById("videoContainer");
-    const joinBtn = document.getElementById("joinBtn");
-    const statusEl = document.getElementById("status");
-    const volumeSlider = document.getElementById("volumeSlider");
-    const volumeIcon = document.getElementById("volumeIcon");
-    const fullscreenBtn = document.getElementById("fullscreenBtn");
-    const statsBtn = document.getElementById("statsBtn");
-    const statsPanel = document.getElementById("stats");
-    const qualityEl = document.getElementById("quality");
-    const connectionStatus = document.getElementById("connectionStatus");
-    const connectionText = document.getElementById("connectionText");
-    const settingsBtn = document.getElementById("settingsBtn");
-    const settingsPanel = document.getElementById("settingsPanel");
-    const settingsOverlay = document.getElementById("settingsOverlay");
-    const closeSettings = document.getElementById("closeSettings");
-
-    // Sistema de temas
-    const themeOptions = document.querySelectorAll('.theme-option');
-    const savedTheme = localStorage.getItem('angelitatv-theme') || 'purple';
-    
-    document.body.className = savedTheme;
-    themeOptions.forEach(opt => {
-      if (opt.dataset.theme === savedTheme) {
-        opt.classList.add('active');
-      }
-      
-      opt.addEventListener('click', () => {
-        themeOptions.forEach(o => o.classList.remove('active'));
-        opt.classList.add('active');
-        document.body.className = opt.dataset.theme;
-        localStorage.setItem('angelitatv-theme', opt.dataset.theme);
-      });
-    });
-
-    // Abrir/cerrar panel de configuración
-    function openSettings() {
-      settingsPanel.classList.add('active');
-      settingsOverlay.classList.add('active');
-    }
-
-    function closeSettingsPanel() {
-      settingsPanel.classList.remove('active');
-      settingsOverlay.classList.remove('active');
-    }
-
-    settingsBtn.onclick = openSettings;
-    closeSettings.onclick = closeSettingsPanel;
-    settingsOverlay.onclick = closeSettingsPanel;
-
-    joinBtn.onclick = async () => {
-      const roomId = document.getElementById("roomId").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      if (!roomId || !password) {
-        statusEl.textContent = "⚠️ Por favor ingresa ID y contraseña";
-        return;
-      }
-
-      joinBtn.disabled = true;
-      document.getElementById("btnText").textContent = "⏳ Conectando...";
-      reconnectAttempts = 0;
-      connectToRoom(roomId, password);
+    const CONFIG = {
+      signalingUrl: "wss://cucaracha-server.onrender.com",
+      maxReconnects: 3,
+      iceServers: [
+        { urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"] },
+        { urls: "stun:global.stun.twilio.com:3478" },
+        {
+          urls: ["turn:openrelay.metered.ca:80", "turn:openrelay.metered.ca:443"],
+          username: "openrelayproject",
+          credential: "openrelayproject"
+        },
+        {
+          urls: ["turn:a.relay.metered.ca:80", "turn:a.relay.metered.ca:443"],
+          username: "87c4a8b8e928d97b360eec55",
+          credential: "F/WHZFGjGKurYCOM"
+        }
+      ]
     };
 
-    function updateConnectionStatus(state, text) {
-      connectionStatus.className = 'connection-status active ' + state;
-      connectionText.textContent = text;
-    }
+    const state = {
+      ws: null,
+      pc: null,
+      roomId: null,
+      statsInterval: null,
+      reconnectAttempts: 0,
+      iceCandidateQueue: []
+    };
 
-    function connectToRoom(roomId, password) {
-      currentRoom = roomId;
-      statusEl.textContent = "🔌 Conectando al servidor...";
-      ws = new WebSocket(signalingUrl);
+    const elements = {
+      video: document.getElementById("remoteVideo"),
+      container: document.getElementById("videoContainer"),
+      joinBtn: document.getElementById("joinBtn"),
+      status: document.getElementById("status"),
+      quality: document.getElementById("quality"),
+      connectionStatus: document.getElementById("connectionStatus"),
+      connectionText: document.getElementById("connectionText"),
+      volumeSlider: document.getElementById("volumeSlider"),
+      volumeIcon: document.getElementById("volumeIcon")
+    };
 
-      ws.onopen = () => {
-        console.log("✅ Conectado al servidor");
-        initializePeerConnection();
-        ws.send(JSON.stringify({ type: "join", room: roomId, password }));
-        statusEl.textContent = "⏳ Esperando transmisión...";
-        qualityEl.textContent = "Esperando...";
-      };
-
-      ws.onmessage = async (event) => {
-        const data = JSON.parse(event.data);
-        console.log("📩 Mensaje recibido:", data.type);
-
-        if (data.type === "offer") {
-          console.log("📥 Oferta recibida del emisor");
-          statusEl.textContent = "🔗 Procesando oferta...";
-          qualityEl.textContent = "Conectando...";
-          updateConnectionStatus('checking', '🔄 Conectando...');
-          
-          try {
-            console.log("Estableciendo descripción remota...");
-            await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
-            console.log("✅ Descripción remota establecida");
-            
-            console.log("Creando respuesta...");
-            const answer = await pc.createAnswer();
-            console.log("✅ Respuesta creada");
-            
-            await pc.setLocalDescription(answer);
-            console.log("✅ Descripción local establecida");
-            
-            console.log("📤 Enviando respuesta al emisor...");
-            ws.send(JSON.stringify({ 
-              type: "answer", 
-              answer, 
-              room: currentRoom 
-            }));
-            console.log("✅ Respuesta enviada exitosamente");
-            
-            statusEl.textContent = "⏳ Esperando stream de video...";
-            qualityEl.textContent = "Esperando...";
-            
-          } catch (err) {
-            console.error("❌ Error al procesar oferta:", err);
-            statusEl.textContent = "❌ Error al establecer conexión: " + err.message;
-            updateConnectionStatus('failed', '❌ Error');
-            alert("Error al procesar la oferta: " + err.message);
-          }
-          
-        } else if (data.type === "ice-candidate") {
-          if (data.candidate) {
-            try {
-              if (pc && pc.remoteDescription) {
-                await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-                console.log("✅ Candidato ICE agregado:", data.candidate.type);
-              } else {
-                console.warn("⚠️ Esperando establecer descripción remota antes de agregar candidatos");
-              }
-            } catch (err) {
-              console.error("❌ Error al agregar candidato ICE:", err);
-            }
-          }
-        } else if (data.type === "error") {
-          statusEl.textContent = "❌ " + data.message;
-          qualityEl.textContent = "Error";
-          updateConnectionStatus('failed', '❌ ' + data.message);
-          joinBtn.disabled = false;
-          document.getElementById("btnText").textContent = "🎬 Reintentar";
-          alert(data.message);
-        }
-      };
-
-      ws.onerror = (error) => {
-        console.error("❌ Error WebSocket:", error);
-        statusEl.textContent = "❌ Error de conexión al servidor";
-        joinBtn.disabled = false;
-      };
-
-      ws.onclose = () => {
-        console.log("🔌 WebSocket cerrado");
-        statusEl.textContent = "❌ Desconectado del servidor";
-        qualityEl.textContent = "Desconectado";
-        updateConnectionStatus('failed', '❌ Desconectado');
-        if (statsInterval) clearInterval(statsInterval);
+    // Gestión de temas
+    const themeManager = {
+      init() {
+        const saved = localStorage.getItem('angelitatv-theme') || 'purple';
+        document.body.className = saved;
         
-        // Intentar reconectar si fue inesperado
-        if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS && videoContainer.classList.contains('active')) {
-          reconnectAttempts++;
-          console.log(`🔄 Intento de reconexión ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS}`);
-          statusEl.textContent = `🔄 Reconectando... (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`;
-          setTimeout(() => connectToRoom(roomId, password), 2000);
-        }
-      };
-    }
+        document.querySelectorAll('.theme-option').forEach(opt => {
+          if (opt.dataset.theme === saved) opt.classList.add('active');
+          opt.onclick = () => this.setTheme(opt.dataset.theme);
+        });
+      },
+      setTheme(theme) {
+        document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+        event.target.closest('.theme-option').classList.add('active');
+        document.body.className = theme;
+        localStorage.setItem('angelitatv-theme', theme);
+      }
+    };
 
-    function initializePeerConnection() {
-      // Configuración mejorada con múltiples servidores TURN
-      pc = new RTCPeerConnection({
-        iceServers: [
-          // Servidores STUN de Google (múltiples para redundancia)
-          { urls: "stun:stun.l.google.com:19302" },
-          { urls: "stun:stun1.l.google.com:19302" },
-          { urls: "stun:stun2.l.google.com:19302" },
-          { urls: "stun:stun3.l.google.com:19302" },
-          { urls: "stun:stun4.l.google.com:19302" },
-          // Servidor STUN de Twilio
-          { urls: "stun:global.stun.twilio.com:3478" },
-          
-          // Servidores TURN - OpenRelay (múltiples puertos)
-          {
-            urls: [
-              "turn:openrelay.metered.ca:80",
-              "turn:openrelay.metered.ca:80?transport=tcp",
-              "turn:openrelay.metered.ca:443",
-              "turn:openrelay.metered.ca:443?transport=tcp"
-            ],
-            username: "openrelayproject",
-            credential: "openrelayproject"
-          },
-          // Servidores TURN adicionales - Metered (alternativo)
-          {
-            urls: [
-              "turn:a.relay.metered.ca:80",
-              "turn:a.relay.metered.ca:80?transport=tcp",
-              "turn:a.relay.metered.ca:443",
-              "turn:a.relay.metered.ca:443?transport=tcp"
-            ],
-            username: "87c4a8b8e928d97b360eec55",
-            credential: "F/WHZFGjGKurYCOM"
-          },
-          // Servidor TURN de Numb (gratis)
-          {
-            urls: [
-              "turn:numb.viagenie.ca",
-              "turn:numb.viagenie.ca:3478?transport=tcp"
-            ],
-            username: "webrtc@live.com",
-            credential: "muazkh"
-          }
-        ],
-        iceCandidatePoolSize: 10,
-        bundlePolicy: 'max-bundle',
-        rtcpMuxPolicy: 'require',
-        iceTransportPolicy: 'all' // Usar todos los candidatos disponibles
-      });
+    // Configuración de paneles
+    const settingsManager = {
+      panel: document.getElementById('settingsPanel'),
+      overlay: document.getElementById('settingsOverlay'),
+      toggle(show) {
+        this.panel.classList.toggle('active', show);
+        this.overlay.classList.toggle('active', show);
+      }
+    };
 
-      pc.onicecandidate = (event) => {
-        if (event.candidate) {
-          console.log("📤 Enviando candidato ICE:", event.candidate.type);
-          ws.send(JSON.stringify({
-            type: "ice-candidate",
-            candidate: event.candidate,
-            room: currentRoom
-          }));
-        } else {
-          console.log("✅ Todos los candidatos ICE enviados");
-          // Enviar señal de que terminamos de recopilar candidatos
-          ws.send(JSON.stringify({
-            type: "ice-candidate-complete",
-            room: currentRoom
-          }));
-        }
-      };
+    document.getElementById('settingsBtn').onclick = () => settingsManager.toggle(true);
+    document.getElementById('closeSettings').onclick = () => settingsManager.toggle(false);
+    document.getElementById('settingsOverlay').onclick = () => settingsManager.toggle(false);
 
-      pc.ontrack = (event) => {
-        console.log("🎥 ¡Evento ontrack disparado!");
-        console.log("Stream recibido:", event.streams[0]);
-        console.log("Tracks en el stream:", event.streams[0].getTracks().length);
-        
-        videoEl.srcObject = event.streams[0];
-        videoContainer.classList.add("active");
-        connectionStatus.classList.add("active");
-        
-        // Actualizar estado inmediatamente
-        statusEl.textContent = "✅ Stream conectado - Cargando video...";
-        qualityEl.textContent = "Buffering...";
-        updateConnectionStatus('connected', '✅ Recibiendo');
-        
-        // Verificar si hay audio
-        const audioTracks = event.streams[0].getAudioTracks();
-        const videoTracks = event.streams[0].getVideoTracks();
-        
-        console.log(`Video tracks: ${videoTracks.length}`);
-        console.log(`Audio tracks: ${audioTracks.length}`);
-        
-        if (audioTracks.length === 0) {
-          console.warn("⚠️ No se detectó pista de audio");
-        } else {
-          console.log("✅ Pista de audio detectada");
-        }
-        
-        if (videoTracks.length === 0) {
-          console.error("❌ No se detectó pista de video!");
-          statusEl.textContent = "❌ No hay video en la transmisión";
-        } else {
-          console.log("✅ Pista de video detectada");
-        }
-        
-        startStatsMonitoring();
-      };
-
-      pc.onconnectionstatechange = () => {
-        const state = pc.connectionState;
-        console.log("🔄 Estado de conexión:", state);
-        document.getElementById("connState").textContent = state;
-        
-        if (state === "connected") {
-          statusEl.textContent = "✅ Conectado - Transmisión en vivo";
-          qualityEl.textContent = "En vivo";
-          updateConnectionStatus('connected', '✅ En vivo');
-          reconnectAttempts = 0;
-        } else if (state === "connecting") {
-          statusEl.textContent = "🔗 Estableciendo conexión...";
-          qualityEl.textContent = "Conectando...";
-          updateConnectionStatus('checking', '🔄 Conectando...');
-        } else if (state === "failed") {
-          statusEl.textContent = "❌ Conexión fallida";
-          qualityEl.textContent = "Error";
-          updateConnectionStatus('failed', '❌ Falló');
-          console.error("❌ La conexión peer falló");
-        } else if (state === "disconnected") {
-          statusEl.textContent = "⚠️ Conexión interrumpida";
-          qualityEl.textContent = "Desconectado";
-          updateConnectionStatus('failed', '⚠️ Desconectado');
-          videoContainer.classList.remove("active");
-        }
-      };
-
-      pc.oniceconnectionstatechange = () => {
-        const iceState = pc.iceConnectionState;
-        console.log("🧊 Estado ICE:", iceState);
-        document.getElementById("iceState").textContent = iceState;
-        
-        if (iceState === 'failed') {
-          console.error("❌ ICE falló - posible problema de firewall/NAT");
-          statusEl.textContent = "❌ No se pudo conectar (firewall/NAT)";
-          updateConnectionStatus('failed', '❌ Firewall/NAT');
-        } else if (iceState === 'checking') {
-          updateConnectionStatus('checking', '🔄 Verificando ruta...');
-        } else if (iceState === 'connected' || iceState === 'completed') {
-          updateConnectionStatus('connected', '✅ Conectado');
-        }
-      };
-
-      pc.onicegatheringstatechange = () => {
-        console.log("🔍 Estado de recolección ICE:", pc.iceGatheringState);
-      };
-    }
-
-    async function startStatsMonitoring() {
-      let lastBytesReceived = 0;
-      let lastTimestamp = Date.now();
+    // Utilidades
+    const utils = {
+      updateStatus(msg, quality = null) {
+        elements.status.textContent = msg;
+        if (quality) elements.quality.textContent = quality;
+      },
       
-      statsInterval = setInterval(async () => {
-        if (!pc) return;
+      updateConnectionStatus(state, text) {
+        elements.connectionStatus.className = `connection-status active ${state}`;
+        elements.connectionText.textContent = text;
+      }
+    };
+
+    // Estadísticas
+    const statsManager = {
+      lastBytes: 0,
+      lastTime: Date.now(),
+      
+      start() {
+        state.statsInterval = setInterval(() => this.update(), 1000);
+      },
+      
+      async update() {
+        if (!state.pc) return;
         
         try {
-          const stats = await pc.getStats();
+          const stats = await state.pc.getStats();
           stats.forEach(report => {
             if (report.type === 'inbound-rtp' && report.kind === 'video') {
-              // Bitrate
-              if (report.bytesReceived && lastBytesReceived > 0) {
-                const now = Date.now();
-                const bitrate = Math.round(
-                  ((report.bytesReceived - lastBytesReceived) * 8) / 
-                  ((now - lastTimestamp) / 1000) / 1000
-                );
-                document.getElementById("bitrate").textContent = bitrate + " kbps";
-                lastBytesReceived = report.bytesReceived;
-                lastTimestamp = now;
-              } else {
-                lastBytesReceived = report.bytesReceived;
-                lastTimestamp = Date.now();
-              }
-              
-              // FPS
-              if (report.framesPerSecond) {
-                document.getElementById("fpsDisplay").textContent = Math.round(report.framesPerSecond);
-              }
-              
-              // Resolución
-              if (report.frameWidth && report.frameHeight) {
-                document.getElementById("resolution").textContent = 
-                  report.frameWidth + "x" + report.frameHeight;
-              }
-
-              // Paquetes perdidos
-              if (report.packetsLost !== undefined) {
-                document.getElementById("packetsLost").textContent = report.packetsLost;
-              }
+              this.updateBitrate(report);
+              this.updateVideoStats(report);
             }
           });
         } catch (err) {
           console.error("Error obteniendo stats:", err);
         }
-      }, 1000);
+      },
+      
+      updateBitrate(report) {
+        if (report.bytesReceived && this.lastBytes > 0) {
+          const now = Date.now();
+          const bitrate = Math.round(
+            ((report.bytesReceived - this.lastBytes) * 8) / 
+            ((now - this.lastTime) / 1000) / 1000
+          );
+          document.getElementById("bitrate").textContent = bitrate + " kbps";
+          this.lastBytes = report.bytesReceived;
+          this.lastTime = now;
+        } else {
+          this.lastBytes = report.bytesReceived;
+          this.lastTime = Date.now();
+        }
+      },
+      
+      updateVideoStats(report) {
+        if (report.framesPerSecond) {
+          document.getElementById("fpsDisplay").textContent = Math.round(report.framesPerSecond);
+        }
+        if (report.frameWidth && report.frameHeight) {
+          document.getElementById("resolution").textContent = `${report.frameWidth}x${report.frameHeight}`;
+        }
+        if (report.packetsLost !== undefined) {
+          document.getElementById("packetsLost").textContent = report.packetsLost;
+        }
+      }
+    };
+
+    // WebRTC
+    const rtcManager = {
+      init() {
+        state.pc = new RTCPeerConnection({
+          iceServers: CONFIG.iceServers,
+          iceCandidatePoolSize: 10,
+          bundlePolicy: 'max-bundle',
+          rtcpMuxPolicy: 'require'
+        });
+
+        state.pc.onicecandidate = (e) => {
+          if (e.candidate) {
+            console.log("📤 Enviando candidato ICE:", e.candidate.type);
+            state.ws.send(JSON.stringify({
+              type: "ice-candidate",
+              candidate: e.candidate,
+              room: state.roomId
+            }));
+          }
+        };
+
+        state.pc.ontrack = (e) => {
+          console.log("🎥 Stream recibido");
+          elements.video.srcObject = e.streams[0];
+          elements.container.classList.add("active");
+          elements.connectionStatus.classList.add("active");
+          
+          utils.updateStatus("✅ Stream conectado - Cargando video...", "Buffering...");
+          utils.updateConnectionStatus('connected', '✅ Recibiendo');
+          
+          const audioTracks = e.streams[0].getAudioTracks();
+          console.log(`🔊 Audio: ${audioTracks.length > 0 ? 'Sí' : 'No'}`);
+          
+          statsManager.start();
+        };
+
+        state.pc.onconnectionstatechange = () => {
+          const connectionState = state.pc.connectionState;
+          console.log("🔄 Estado de conexión:", connectionState);
+          document.getElementById("connState").textContent = connectionState;
+          
+          const stateMap = {
+            connected: ["✅ Conectado - Transmisión en vivo", "En vivo", "connected", "✅ En vivo"],
+            connecting: ["🔗 Estableciendo conexión...", "Conectando...", "checking", "🔄 Conectando..."],
+            failed: ["❌ Conexión fallida", "Error", "failed", "❌ Falló"],
+            disconnected: ["⚠️ Conexión interrumpida", "Desconectado", "failed", "⚠️ Desconectado"]
+          };
+          
+          if (stateMap[connectionState]) {
+            const [status, quality, connClass, connText] = stateMap[connectionState];
+            utils.updateStatus(status, quality);
+            utils.updateConnectionStatus(connClass, connText);
+            if (connectionState === 'connected') state.reconnectAttempts = 0;
+            if (connectionState === 'disconnected') elements.container.classList.remove("active");
+          }
+        };
+
+        state.pc.oniceconnectionstatechange = () => {
+          const iceState = state.pc.iceConnectionState;
+          console.log("🧊 Estado ICE:", iceState);
+          document.getElementById("iceState").textContent = iceState;
+          
+          if (iceState === 'failed') {
+            utils.updateStatus("❌ No se pudo conectar (firewall/NAT)");
+            utils.updateConnectionStatus('failed', '❌ Firewall/NAT');
+          } else if (iceState === 'checking') {
+            utils.updateConnectionStatus('checking', '🔄 Verificando ruta...');
+          } else if (iceState === 'connected' || iceState === 'completed') {
+            utils.updateConnectionStatus('connected', '✅ Conectado');
+          }
+        };
+      },
+
+      async handleOffer(offer) {
+        utils.updateStatus("🔗 Procesando oferta...", "Conectando...");
+        utils.updateConnectionStatus('checking', '🔄 Conectando...');
+        
+        try {
+          await state.pc.setRemoteDescription(new RTCSessionDescription(offer));
+          console.log("✅ Descripción remota establecida");
+          
+          // Procesar candidatos en cola
+          console.log(`📦 Procesando ${state.iceCandidateQueue.length} candidatos ICE en cola`);
+          while (state.iceCandidateQueue.length > 0) {
+            const candidate = state.iceCandidateQueue.shift();
+            try {
+              await state.pc.addIceCandidate(new RTCIceCandidate(candidate));
+            } catch (error) {
+              console.error("❌ Error al procesar candidato:", error);
+            }
+          }
+          
+          const answer = await state.pc.createAnswer();
+          await state.pc.setLocalDescription(answer);
+          
+          state.ws.send(JSON.stringify({ 
+            type: "answer", 
+            answer, 
+            room: state.roomId 
+          }));
+          
+          utils.updateStatus("⏳ Esperando stream de video...", "Esperando...");
+          
+        } catch (err) {
+          console.error("❌ Error al procesar oferta:", err);
+          utils.updateStatus("❌ Error: " + err.message);
+          utils.updateConnectionStatus('failed', '❌ Error');
+          alert("Error al procesar la oferta: " + err.message);
+        }
+      },
+
+      handleIceCandidate(candidate) {
+        if (!state.pc.remoteDescription) {
+          console.log("⏳ Candidato ICE en cola");
+          state.iceCandidateQueue.push(candidate);
+        } else {
+          state.pc.addIceCandidate(new RTCIceCandidate(candidate))
+            .then(() => console.log("✅ Candidato ICE agregado"))
+            .catch(err => console.error("❌ Error:", err));
+        }
+      }
+    };
+
+    // WebSocket
+    function connectWebSocket(roomId, password) {
+      state.roomId = roomId;
+      utils.updateStatus("🔌 Conectando al servidor...");
+      state.ws = new WebSocket(CONFIG.signalingUrl);
+
+      state.ws.onopen = () => {
+        console.log("✅ Conectado al servidor");
+        rtcManager.init();
+        state.ws.send(JSON.stringify({ type: "join", room: roomId, password }));
+        utils.updateStatus("⏳ Esperando transmisión...", "Esperando...");
+      };
+
+      state.ws.onmessage = async (e) => {
+        const data = JSON.parse(e.data);
+        console.log("📩 Mensaje recibido:", data.type);
+
+        switch(data.type) {
+          case "offer":
+            await rtcManager.handleOffer(data.offer);
+            break;
+          case "ice-candidate":
+            if (data.candidate) rtcManager.handleIceCandidate(data.candidate);
+            break;
+          case "error":
+            utils.updateStatus("❌ " + data.message, "Error");
+            utils.updateConnectionStatus('failed', '❌ ' + data.message);
+            elements.joinBtn.disabled = false;
+            document.getElementById("btnText").textContent = "🎬 Reintentar";
+            alert(data.message);
+            break;
+        }
+      };
+
+      state.ws.onerror = (error) => {
+        console.error("❌ Error WebSocket:", error);
+        utils.updateStatus("❌ Error de conexión al servidor");
+        elements.joinBtn.disabled = false;
+      };
+
+      state.ws.onclose = () => {
+        console.log("🔌 WebSocket cerrado");
+        utils.updateStatus("❌ Desconectado del servidor", "Desconectado");
+        utils.updateConnectionStatus('failed', '❌ Desconectado');
+        if (state.statsInterval) clearInterval(state.statsInterval);
+        
+        if (state.reconnectAttempts < CONFIG.maxReconnects && elements.container.classList.contains('active')) {
+          state.reconnectAttempts++;
+          console.log(`🔄 Reconexión ${state.reconnectAttempts}/${CONFIG.maxReconnects}`);
+          utils.updateStatus(`🔄 Reconectando... (${state.reconnectAttempts}/${CONFIG.maxReconnects})`);
+          setTimeout(() => connectWebSocket(roomId, password), 2000);
+        }
+      };
     }
 
-    // Control de volumen
-    volumeSlider.addEventListener("input", () => {
-      const volume = volumeSlider.value / 100;
-      videoEl.volume = volume;
-      
-      if (volume === 0) {
-        volumeIcon.textContent = "🔇";
-      } else if (volume < 0.5) {
-        volumeIcon.textContent = "🔉";
-      } else {
-        volumeIcon.textContent = "🔊";
-      }
-    });
+    // Controles de video
+    const videoControls = {
+      init() {
+        elements.volumeSlider.addEventListener("input", () => this.updateVolume());
+        elements.volumeIcon.addEventListener("click", () => this.toggleMute());
+        document.getElementById('fullscreenBtn').addEventListener("click", () => this.toggleFullscreen());
+        document.getElementById('statsBtn').addEventListener("click", () => this.toggleStats());
+        document.addEventListener("keydown", (e) => this.handleKeyboard(e));
+        
+        // Eventos de video
+        elements.video.addEventListener('loadedmetadata', () => {
+          console.log(`✅ Video: ${elements.video.videoWidth}x${elements.video.videoHeight}`);
+          utils.updateStatus("✅ Video cargado - Iniciando reproducción...", "Iniciando...");
+          utils.updateConnectionStatus('connected', '✅ Cargado');
+        });
 
-    volumeIcon.addEventListener("click", () => {
-      if (videoEl.volume > 0) {
-        videoEl.volume = 0;
-        volumeSlider.value = 0;
-        volumeIcon.textContent = "🔇";
-      } else {
-        videoEl.volume = 1;
-        volumeSlider.value = 100;
-        volumeIcon.textContent = "🔊";
-      }
-    });
+        elements.video.addEventListener('playing', () => {
+          console.log("▶️ Reproduciendo");
+          utils.updateStatus("✅ Reproduciendo transmisión en vivo", "En vivo");
+          utils.updateConnectionStatus('connected', '✅ En vivo');
+        });
 
-    // Pantalla completa
-    fullscreenBtn.addEventListener("click", () => {
-      if (!document.fullscreenElement) {
-        if (videoContainer.requestFullscreen) {
-          videoContainer.requestFullscreen();
-        } else if (videoContainer.webkitRequestFullscreen) {
-          videoContainer.webkitRequestFullscreen();
-        } else if (videoContainer.mozRequestFullScreen) {
-          videoContainer.mozRequestFullScreen();
+        elements.video.addEventListener('waiting', () => {
+          utils.updateStatus("⏳ Buffering...", "Buffering...");
+        });
+
+        elements.video.addEventListener('error', (e) => {
+          console.error("❌ Error video:", elements.video.error);
+          utils.updateStatus("❌ Error al reproducir video");
+          utils.updateConnectionStatus('failed', '❌ Error video');
+        });
+      },
+
+      updateVolume() {
+        const volume = elements.volumeSlider.value / 100;
+        elements.video.volume = volume;
+        
+        const icons = { 0: "🔇", 0.5: "🔉", 1: "🔊" };
+        elements.volumeIcon.textContent = volume === 0 ? icons[0] : volume < 0.5 ? icons[0.5] : icons[1];
+      },
+
+      toggleMute() {
+        if (elements.video.volume > 0) {
+          elements.video.volume = 0;
+          elements.volumeSlider.value = 0;
+          elements.volumeIcon.textContent = "🔇";
+        } else {
+          elements.video.volume = 1;
+          elements.volumeSlider.value = 100;
+          elements.volumeIcon.textContent = "🔊";
         }
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
+      },
+
+      toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          const methods = [
+            elements.container.requestFullscreen,
+            elements.container.webkitRequestFullscreen,
+            elements.container.mozRequestFullScreen
+          ];
+          methods.find(m => m)?.call(elements.container);
+        } else {
+          const methods = [
+            document.exitFullscreen,
+            document.webkitExitFullscreen,
+            document.mozCancelFullScreen
+          ];
+          methods.find(m => m)?.call(document);
         }
+      },
+
+      toggleStats() {
+        document.getElementById('stats').classList.toggle('active');
+      },
+
+      handleKeyboard(e) {
+        if (!elements.container.classList.contains("active")) return;
+        
+        const keyMap = {
+          'f': () => this.toggleFullscreen(),
+          'F': () => this.toggleFullscreen(),
+          ' ': (e) => {
+            e.preventDefault();
+            elements.video.paused ? elements.video.play() : elements.video.pause();
+          },
+          'm': () => this.toggleMute(),
+          'M': () => this.toggleMute()
+        };
+        
+        keyMap[e.key]?.(e);
       }
-    });
+    };
 
-    // Mostrar/ocultar estadísticas
-    statsBtn.addEventListener("click", () => {
-      statsPanel.classList.toggle("active");
-    });
+    // Event Listeners principales
+    elements.joinBtn.onclick = () => {
+      const roomId = document.getElementById("roomId").value.trim();
+      const password = document.getElementById("password").value.trim();
 
-    // Atajos de teclado
-    document.addEventListener("keydown", (e) => {
-      if (!videoContainer.classList.contains("active")) return;
-      
-      if (e.key === "f" || e.key === "F") {
-        fullscreenBtn.click();
-      } else if (e.key === " ") {
-        e.preventDefault();
-        videoEl.paused ? videoEl.play() : videoEl.pause();
-      } else if (e.key === "m" || e.key === "M") {
-        volumeIcon.click();
+      if (!roomId || !password) {
+        utils.updateStatus("⚠️ Por favor ingresa ID y contraseña");
+        return;
       }
-    });
 
-    // Manejar eventos de audio y video
-    videoEl.addEventListener('loadedmetadata', () => {
-      console.log("✅ Metadatos del video cargados");
-      console.log(`Dimensiones: ${videoEl.videoWidth}x${videoEl.videoHeight}`);
-      console.log(`Duración: ${videoEl.duration}`);
-      
-      statusEl.textContent = "✅ Video cargado - Iniciando reproducción...";
-      qualityEl.textContent = "Iniciando...";
-      updateConnectionStatus('connected', '✅ Cargado');
-      
-      const audioTracks = videoEl.srcObject?.getAudioTracks() || [];
-      console.log(`🔊 Pistas de audio disponibles: ${audioTracks.length}`);
-      audioTracks.forEach((track, index) => {
-        console.log(`  Pista ${index}: ${track.label}, enabled: ${track.enabled}`);
-      });
-    });
+      elements.joinBtn.disabled = true;
+      document.getElementById("btnText").textContent = "⏳ Conectando...";
+      state.reconnectAttempts = 0;
+      state.iceCandidateQueue.length = 0;
+      connectWebSocket(roomId, password);
+    };
 
-    videoEl.addEventListener('loadeddata', () => {
-      console.log("📊 Datos del video cargados - Listo para reproducir");
-    });
-
-    videoEl.addEventListener('canplay', () => {
-      console.log("▶️ Video puede reproducirse");
-      statusEl.textContent = "✅ Listo para reproducir";
-    });
-
-    videoEl.addEventListener('playing', () => {
-      console.log("▶️ Video reproduciendo exitosamente");
-      statusEl.textContent = "✅ Reproduciendo transmisión en vivo";
-      qualityEl.textContent = "En vivo";
-      updateConnectionStatus('connected', '✅ En vivo');
-    });
-
-    videoEl.addEventListener('waiting', () => {
-      console.log("⏳ Video en buffering...");
-      statusEl.textContent = "⏳ Buffering...";
-      qualityEl.textContent = "Buffering...";
-    });
-
-    videoEl.addEventListener('error', (e) => {
-      console.error("❌ Error en el elemento video:", e);
-      console.error("Error code:", videoEl.error?.code);
-      console.error("Error message:", videoEl.error?.message);
-      statusEl.textContent = "❌ Error al reproducir video";
-      updateConnectionStatus('failed', '❌ Error video');
-    });
-
-    videoEl.addEventListener('stalled', () => {
-      console.warn("⚠️ Reproducción estancada");
-    });
+    // Inicializar
+    themeManager.init();
+    videoControls.init();
   </script>
 </body>
 </html>
